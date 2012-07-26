@@ -1,0 +1,22 @@
+- classes
+  - immutabilisation? (any advantage?)
+  - namespace clean?
+
+- attribute
+  - weakrefs
+  - triggers
+  - native delegation?
+  - attribute inheritance?
+  - initaliser?
+
+- methods
+  - __preinit__ c.f. BUILDARGS
+  - method modifiers (before, after, around)
+  - inner and augment
+
+- roles
+  - uninstantiable
+  - required attributes
+  - required methods
+  - method exclusion and aliasing
+  - apply role to instance?
