@@ -105,7 +105,18 @@ class AttributeDescriptor(object):
             raise TypeError('Attribute default has bad type.')
 
     def init_class(self, name, dict):
-        """Initialise the attribute with respect to the class."""
+        """Initialise the attribute descriptor with respect to the class.
+
+        Store the name of this attribute inside the descriptor.  It
+        could be looked up when it's needed but since we know it
+        right now, we save the trouble and just remember it.
+
+        If a builder method is named, check that it exists on the
+        class.
+
+        Set up descriptors required to handle attribute delegations.
+
+        """
         # store name
         self._name = name
 

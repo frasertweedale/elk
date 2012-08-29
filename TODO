@@ -15,7 +15,6 @@
   - inner and augment
 
 - roles
-  - uninstantiable
   - required attributes
   - required methods
   - method exclusion and aliasing

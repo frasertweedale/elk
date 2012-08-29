@@ -14,11 +14,33 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
+
 from . import attribute
 
 
 class ElkMeta(type):
     def __new__(mcs, name, bases, dict):
+        # initialise roles
+        roles = dict.get('__does__', ())
+        if not isinstance(roles, collections.Iterable):
+            roles = (roles,)
+        badroles = [
+            role for role in roles
+            if not issubclass(type(role), ElkRole)
+        ]
+        if badroles:
+            raise TypeError(
+                'Non-roles in __roles__: {}'.format(badroles)
+            )
+        dict['__elk_roles__'] = roles
+        for role in roles:
+            ElkRole.apply_to_class_dict(dict, role)
+
+        # add the ``does`` method
+        dict['does'] = lambda self, role: role in self.__elk_roles__
+
+        # initialise attributes
         attrdescs = {
             k: v for k, v in dict.items()
             if isinstance(v, attribute.AttributeDescriptor)
@@ -62,3 +84,15 @@ class ElkMeta(type):
                 del attrdescs[k]
 
         return obj
+
+
+class ElkRole(type):
+    def __call__(self, *args, **kwargs):
+        raise TypeError('Roles cannot be instantiated directly.')
+
+    @classmethod
+    def apply_to_class_dict(mcs, dict, role):
+        """Apply a role to a class."""
+        for k, v in role.__dict__.items():
+            if k not in dict and not k.startswith('__'):
+                dict[k] = v
