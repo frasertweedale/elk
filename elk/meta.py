@@ -1,5 +1,5 @@
 # This file is part of elk
-# Copyright (C) 2012 Fraser Tweedale
+# Copyright (C) 2012, 2013 Fraser Tweedale
 #
 # elk is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,20 +41,22 @@ class ElkMeta(type):
         dict['does'] = lambda self, role: role in self.__elk_roles__
 
         # initialise attributes
-        attrdescs = {
+        attrdescs = {}
+        for base in reversed(bases):
+            if hasattr(base, '__elk_attrs__'):
+                attrdescs.update(base.__elk_attrs__)
+        attrdescs.update({
             k: v for k, v in dict.items()
             if isinstance(v, attribute.AttributeDescriptor)
-        }
+        })
         for k in attrdescs:
             attrdescs[k].init_class(k, dict)
+        dict['__elk_attrs__'] = attrdescs
         return type.__new__(mcs, name, bases, dict)
 
     def __call__(self, *args, **kwargs):
         # build a mapping of attribute descriptors
-        attrdescs = {
-            k: v for k, v in self.__dict__.items()
-            if isinstance(v, attribute.AttributeDescriptor)
-        }
+        attrdescs = self.__elk_attrs__
 
         # extract attribute values from kwargs
         init_args = set(v._init_arg or k for k, v in attrdescs.viewitems())
@@ -66,22 +68,20 @@ class ElkMeta(type):
         # initialise attributes
         obj.__elk_attrs__ = {}
         obj.__elk_lazy__ = {}
+        finished = set()
         for method in (
             'init_instance_value',
             'init_instance_default',
             'init_instance_builder',
             'init_instance_required',
         ):
-            finished = []
-            for k, v in attrdescs.viewitems():
+            for k in attrdescs.viewkeys() - finished:
                 kwargs = {}
-                init_arg = v._init_arg or k
+                init_arg = attrdescs[k]._init_arg or k
                 if init_arg in values:
                     kwargs['value'] = values[init_arg]
-                if getattr(v, method)(obj, **kwargs):
-                    finished.append(k)
-            for k in finished:
-                del attrdescs[k]
+                if getattr(attrdescs[k], method)(obj, **kwargs):
+                    finished.add(k)
 
         return obj
 
