@@ -57,24 +57,19 @@ class NonConsumer(object):
 
 class RoleTestCase(unittest.TestCase):
     def test_consumer_does_role(self):
-        self.assertTrue(Consumer().does(Role))
         self.assertTrue(isinstance(Consumer(), Role))
         self.assertTrue(issubclass(Consumer, Role))
 
     def test_subconsumer_does_role(self):
-        self.assertTrue(SubConsumer().does(Role))
         self.assertTrue(isinstance(SubConsumer(), Role))
         self.assertTrue(issubclass(SubConsumer, Role))
 
     def test_multi_consumer_does_all_roles(self):
         for role in [Role, AnotherRole]:
-            self.assertTrue(MultiConsumer().does(role))
             self.assertTrue(isinstance(MultiConsumer(), Role))
             self.assertTrue(issubclass(MultiConsumer, Role))
 
     def test_non_consumer_does_not(self):
-        self.assertFalse(NonConsumer().does(Role))
-        self.assertFalse(Consumer().does(AnotherRole))
         self.assertFalse(isinstance(NonConsumer(), Role))
         self.assertFalse(isinstance(Consumer(), AnotherRole))
         self.assertFalse(issubclass(NonConsumer, Role))
@@ -150,4 +145,4 @@ class MooseRolesTestCase(unittest.TestCase):
         self.assertFalse(car.is_broken)
         car.break_()
         self.assertTrue(car.is_broken)
-        self.assertTrue(car.does(Breakable))
+        self.assertTrue(isinstance(car, Breakable))

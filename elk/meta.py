@@ -37,12 +37,6 @@ class ElkMeta(type):
         for role in roles:
             ElkRole.apply_to_class_dict(dict, role)
 
-        # add the ``does`` method
-        @classmethod
-        def does(cls, role):
-            return issubclass(cls, role)
-        dict['does'] = does
-
         # initialise attributes
         attrdescs = {}
         for base in reversed(bases):
