@@ -1,12 +1,11 @@
 - classes
-  - immutabilisation? (any advantage?)
+  - way to make classes immutable?
   - namespace clean?
 
 - attribute
   - weakrefs
   - triggers
   - native delegation?
-  - attribute inheritance?
   - initaliser?
 
 - methods
