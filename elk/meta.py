@@ -22,7 +22,7 @@ from . import attribute
 class ElkMeta(type):
     def __new__(mcs, name, bases, dict):
         # initialise roles
-        roles = dict.get('__does__', ())
+        roles = dict.get('__with__', ())
         if not isinstance(roles, collections.Iterable):
             roles = (roles,)
         badroles = [
@@ -91,7 +91,7 @@ class ElkRole(type):
         return issubclass(type(instance), cls)
 
     def __subclasscheck__(cls, subclass):
-        roles = getattr(subclass, '__does__', ())
+        roles = getattr(subclass, '__with__', ())
         if not isinstance(roles, collections.Iterable):
             roles = (roles,)
         return cls in roles
