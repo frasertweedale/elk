@@ -38,7 +38,10 @@ class ElkMeta(type):
             ElkRole.apply_to_class_dict(dict, role)
 
         # add the ``does`` method
-        dict['does'] = lambda self, role: role in self.__elk_roles__
+        @classmethod
+        def does(cls, role):
+            return issubclass(cls, role)
+        dict['does'] = does
 
         # initialise attributes
         attrdescs = {}
@@ -89,6 +92,15 @@ class ElkMeta(type):
 class ElkRole(type):
     def __call__(self, *args, **kwargs):
         raise TypeError('Roles cannot be instantiated directly.')
+
+    def __instancecheck__(cls, instance):
+        return issubclass(type(instance), cls)
+
+    def __subclasscheck__(cls, subclass):
+        roles = getattr(subclass, '__does__', ())
+        if not isinstance(roles, collections.Iterable):
+            roles = (roles,)
+        return cls in roles
 
     @classmethod
     def apply_to_class_dict(mcs, dict, role):

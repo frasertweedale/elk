@@ -42,6 +42,10 @@ class Consumer(object):
     __does__ = Role
 
 
+class SubConsumer(Consumer):
+    pass
+
+
 class MultiConsumer(object):
     __metaclass__ = elk.ElkMeta
     __does__ = Role, AnotherRole
@@ -54,14 +58,27 @@ class NonConsumer(object):
 class RoleTestCase(unittest.TestCase):
     def test_consumer_does_role(self):
         self.assertTrue(Consumer().does(Role))
+        self.assertTrue(isinstance(Consumer(), Role))
+        self.assertTrue(issubclass(Consumer, Role))
+
+    def test_subconsumer_does_role(self):
+        self.assertTrue(SubConsumer().does(Role))
+        self.assertTrue(isinstance(SubConsumer(), Role))
+        self.assertTrue(issubclass(SubConsumer, Role))
 
     def test_multi_consumer_does_all_roles(self):
         for role in [Role, AnotherRole]:
             self.assertTrue(MultiConsumer().does(role))
+            self.assertTrue(isinstance(MultiConsumer(), Role))
+            self.assertTrue(issubclass(MultiConsumer, Role))
 
     def test_non_consumer_does_not(self):
         self.assertFalse(NonConsumer().does(Role))
         self.assertFalse(Consumer().does(AnotherRole))
+        self.assertFalse(isinstance(NonConsumer(), Role))
+        self.assertFalse(isinstance(Consumer(), AnotherRole))
+        self.assertFalse(issubclass(NonConsumer, Role))
+        self.assertFalse(issubclass(Consumer, AnotherRole))
 
     def test_consumer_receives_attributes(self):
         self.assertTrue(hasattr(Consumer(), 'role_attr'))
@@ -71,6 +88,10 @@ class RoleTestCase(unittest.TestCase):
         self.assertTrue(hasattr(MultiConsumer(), 'another_role_attr'))
         self.assertEqual(MultiConsumer().role_attr, 'a')
         self.assertEqual(MultiConsumer().another_role_attr, 'b')
+
+    def test_subconsumer_receives_attributes(self):
+        self.assertTrue(hasattr(SubConsumer(), 'role_attr'))
+        self.assertEqual(SubConsumer().role_attr, 'a')
 
     def test_consumer_receives_methods(self):
         self.assertTrue(hasattr(Consumer, 'role_method'))
@@ -83,6 +104,10 @@ class RoleTestCase(unittest.TestCase):
             MultiConsumer().another_role_method(),
             'another value'
         )
+
+    def test_subconsumer_receives_methods(self):
+        self.assertTrue(hasattr(SubConsumer, 'role_method'))
+        self.assertEqual(SubConsumer().role_method(), 'value')
 
     def test_consume_non_role(self):
         class NonRole(object):
