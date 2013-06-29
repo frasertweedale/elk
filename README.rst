@@ -25,7 +25,7 @@ Synopsis
     class Point3D(Point):
         z = elk.ElkAttribute(mode='rw', type=int)
 
-        @elk.after('clear'):
+        @elk.after('clear')
         def clear_z(self):
             self.z = 0
 
