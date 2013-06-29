@@ -57,7 +57,7 @@ How does ``elk`` differ from Moose?
 Moose has many features that are not (yet) implemented in ``elk``.
 
 While ``elk`` tries to faithfully implement Moose paradigms and
-patterns in Python, it uses Python idioms of language features as
+patterns in Python, it uses Python idioms and language features as
 much as possible.  There are also some differences in terminology in
 order to be consistent with Python terminology or idioms.
 
