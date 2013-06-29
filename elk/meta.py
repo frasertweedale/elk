@@ -17,6 +17,7 @@
 import collections
 
 from . import attribute
+from . import modifier
 
 
 class ElkMeta(type):
@@ -49,6 +50,15 @@ class ElkMeta(type):
         for k in attrdescs:
             attrdescs[k].init_class(k, dict)
         dict['__elk_attrs__'] = attrdescs
+
+        # apply method modifiers
+        modifiers = sorted(
+            v for v in dict.viewvalues()
+            if isinstance(v, modifier.Modifier)
+        )
+        for mod in modifiers:
+            mod.apply(dict, bases)
+
         return type.__new__(mcs, name, bases, dict)
 
     def __call__(self, *args, **kwargs):

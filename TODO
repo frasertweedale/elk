@@ -10,8 +10,11 @@
 
 - methods
   - __preinit__ c.f. BUILDARGS
-  - method modifiers (before, after, around)
-  - inner and augment
+  - method modifiers
+    - wrap multiple methods
+      - list
+      - regex
+    - inner and augment
 
 - roles
   - required attributes
