@@ -112,3 +112,7 @@ class ElkRole(type):
         for k, v in role.__dict__.items():
             if k not in dict and not k.startswith('__'):
                 dict[k] = v
+
+
+class Elk(object):
+    __metaclass__ = ElkMeta

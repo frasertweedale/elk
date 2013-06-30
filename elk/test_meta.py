@@ -19,8 +19,7 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     x = elk.ElkAttribute(default=10)
 
 

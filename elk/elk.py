@@ -17,5 +17,5 @@
 """Convenience module for loading public API."""
 
 from .attribute import AttributeDescriptor as ElkAttribute
-from .meta import ElkMeta, ElkRole
+from .meta import ElkMeta, ElkRole, Elk
 from .modifier import before, after, around

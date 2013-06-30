@@ -11,9 +11,7 @@ Synopsis
     import elk
 
 
-    class Point(object):
-        __metaclass__ = elk.ElkMeta
-
+    class Point(elk.Elk):
         x = elk.ElkAttribute(mode='rw', type=int)
         y = elk.ElkAttribute(mode='rw', type=int)
 
