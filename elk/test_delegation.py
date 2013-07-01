@@ -21,59 +21,68 @@ from . import elk
 
 class A(object):
     __metaclass__ = elk.ElkMeta
-    b = elk.ElkAttribute(handles=['c', 'd'])
+    b = elk.ElkAttribute(handles=['attr', 'method'])
 
 
 class B(object):
     __metaclass__ = elk.ElkMeta
-    c = elk.ElkAttribute(handles=['d'])
+    c = elk.ElkAttribute(handles=['attr', 'method'])
 
 
 class C(object):
     __metaclass__ = elk.ElkMeta
-    d = elk.ElkAttribute(default=10)
+    attr = elk.ElkAttribute(default=10)
+
+    def method(self):
+        return 'yay'
 
 
 class DelegationTestCase(unittest.TestCase):
-    def test_b_get_d(self):
-        """Test single-level delegation: get."""
-        b = B()
-        b.c = C()
-        self.assertEqual(b.d, 10)
-
-    def test_b_set_d(self):
-        """Test single-level delegation: set."""
-        b = B()
-        b.c = C()
-        b.d = 20
-        self.assertEqual(b.d, 20)
-
-    def test_b_del_d(self):
-        """Test single-level delegation: del."""
-        b = B()
-        b.c = C()
-        del b.d
-        self.assertFalse(hasattr(b, 'd'))
-
-    def test_a_get_d(self):
-        """Test multi-level delegation: get."""
+    def test_can_getattr_through_delegation(self):
         a = A()
-        a.b = B()
-        a.c = C()
-        self.assertEqual(a.d, 10)
+        b = B()
+        c = C()
+        a.b = b
+        b.c = c
+        self.assertEqual(b.attr, 10)
+        self.assertEqual(a.attr, 10)
 
-    def test_a_set_d(self):
-        """Test multi-level delegation: set."""
+    def test_can_setattr_through_delegation(self):
         a = A()
-        a.b = B()
-        a.c = C()
-        a.d = 20
-        self.assertEqual(a.d, 20)
+        b = B()
+        c = C()
+        a.b = b
+        b.c = c
+        b.attr = 20
+        self.assertEqual(b.attr, 20)
+        self.assertEqual(c.attr, 20)
+        a.attr = 30
+        self.assertEqual(a.attr, 30)
+        self.assertEqual(b.attr, 30)
+        self.assertEqual(c.attr, 30)
 
-    def test_a_del_d(self):
-        """Test multi-level delegation: del."""
+    def test_can_delattr_through_delegation(self):
+        b = B()
+        c = C()
+        b.c = c
+        del b.attr
+        self.assertFalse(hasattr(b, 'attr'))
+        self.assertFalse(hasattr(c, 'attr'))
         a = A()
-        a.b = B()
-        a.c = C()
-        del a.d
-        self.assertFalse(hasattr(a, 'd'))
+        b = B()
+        c = C()
+        a.b = b
+        b.c = c
+        del a.attr
+        self.assertFalse(hasattr(a, 'attr'))
+        self.assertFalse(hasattr(b, 'attr'))
+        self.assertFalse(hasattr(c, 'attr'))
+
+    def test_can_delegate_to_method(self):
+        a = A()
+        b = B()
+        c = C()
+        a.b = b
+        b.c = c
+        self.assertEqual(b.method(), 'yay')
+        self.assertEqual(a.method(), 'yay')
