@@ -54,7 +54,7 @@ class AttributeDescriptor(object):
         lazy=False,
         builder=None,
         type=None,
-        delegate=None,
+        handles=None,
         **kwargs
     ):
         # check mode
@@ -98,8 +98,8 @@ class AttributeDescriptor(object):
             raise TypeError('init_arg must be str or None')
 
         # store delegation list
-        delegate = delegate if delegate is not None else []
-        self._delegate = delegate
+        handles = handles if handles is not None else []
+        self._handles = handles
 
         # perform whatever checks we can right now (compile-time!)
         if self._type is not None and self._has_default \
@@ -136,7 +136,7 @@ class AttributeDescriptor(object):
                 )
 
         # set up delegation
-        for name in self._delegate:
+        for name in self._handles:
             dict[name] = DelegationDescriptor(name, self)
 
     def init_instance_value(self, instance, **kwargs):

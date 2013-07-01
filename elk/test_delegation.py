@@ -21,12 +21,12 @@ from . import elk
 
 class A(object):
     __metaclass__ = elk.ElkMeta
-    b = elk.ElkAttribute(delegate=['c', 'd'])
+    b = elk.ElkAttribute(handles=['c', 'd'])
 
 
 class B(object):
     __metaclass__ = elk.ElkMeta
-    c = elk.ElkAttribute(delegate=['d'])
+    c = elk.ElkAttribute(handles=['d'])
 
 
 class C(object):
