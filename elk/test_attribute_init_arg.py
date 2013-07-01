@@ -37,7 +37,6 @@ class InitArgTestCase(unittest.TestCase):
                 __metaclass__ = elk.ElkMeta
                 x = elk.ElkAttribute(init_arg=10)
 
-    def test_init_arg_none(self):
-        """``None`` init_arg is same as not supplying."""
-        a = A(z='zed')
-        self.assertEqual(a.z, 'zed')
+    def test_none_disables_setting_via_constructor(self):
+        with self.assertRaises(TypeError):
+            A(z='zed')

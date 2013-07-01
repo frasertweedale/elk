@@ -66,7 +66,10 @@ class ElkMeta(type):
         attrdescs = self.__elk_attrs__
 
         # extract attribute values from kwargs
-        init_args = set(v._init_arg or k for k, v in attrdescs.viewitems())
+        init_args = set(
+            v._init_arg or k for k, v in attrdescs.viewitems()
+            if not v._has_init_arg or v._init_arg is not None
+        )
         values = {k: kwargs.pop(k) for k in set(kwargs) & init_args}
 
         # create new object with leftover args

@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import types
+
 
 class DelegationDescriptor(object):
     """Delegate to an attribute on the value of the given descriptor."""
@@ -53,7 +55,6 @@ class AttributeDescriptor(object):
         builder=None,
         type=None,
         delegate=None,
-        init_arg=None,
         **kwargs
     ):
         # check mode
@@ -91,9 +92,10 @@ class AttributeDescriptor(object):
         self._type = type
 
         # check and store init_arg
-        if init_arg is not None and not isinstance(init_arg, str):
-            raise TypeError('init_arg must be a str')
-        self._init_arg = init_arg
+        self._has_init_arg = True if 'init_arg' in kwargs else False
+        self._init_arg = kwargs.get('init_arg')
+        if not isinstance(self._init_arg, (str, types.NoneType)):
+            raise TypeError('init_arg must be str or None')
 
         # store delegation list
         delegate = delegate if delegate is not None else []
