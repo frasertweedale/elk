@@ -19,11 +19,8 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     x = elk.ElkAttribute()
-    y = elk.ElkAttribute(init_arg='init_y')
-    z = elk.ElkAttribute(init_arg=None)
 
 
 class InitialisationTestCase(unittest.TestCase):
@@ -42,23 +39,6 @@ class InitialisationTestCase(unittest.TestCase):
         """Test that arg of regular value has value set."""
         a = A(x=10)
         self.assertEqual(a.x, 10)
-
-    def test_init_arg(self):
-        """``init_arg`` parameter overrides init argument."""
-        a = A(init_y=20)
-        self.assertEqual(a.y, 20)
-
-    def test_init_arg_non_str(self):
-        """Non-str ``init_arg`` value raises TypeError."""
-        with self.assertRaises(TypeError):
-            class B(object):
-                __metaclass__ = elk.ElkMeta
-                x = elk.ElkAttribute(init_arg=10)
-
-    def test_init_arg_none(self):
-        """``None`` init_arg is same as not supplying."""
-        a = A(z='zed')
-        self.assertEqual(a.z, 'zed')
 
 
 class OverrideChecker(object):
