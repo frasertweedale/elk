@@ -19,13 +19,17 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     x = elk.ElkAttribute(builder='_build_x')
     y = elk.ElkAttribute(builder=None)
 
     def _build_x(self):
         return 'buttercup'
+
+
+class B(A):
+    def _build_x(self):
+        return 'let me down'
 
 
 class BuilderTestCase(unittest.TestCase):
@@ -52,3 +56,20 @@ class BuilderTestCase(unittest.TestCase):
             class C(object):
                 __metaclass__ = elk.ElkMeta
                 x = elk.ElkAttribute(builder='nonexistant')
+
+    def test_subclass_can_override_builder_method(self):
+        self.assertEqual(B().x, 'let me down')
+
+
+    def test_role_consumer_can_supply_builder_for_role_attribute(self):
+        class HasSize(object):
+            __metaclass__ = elk.ElkRole
+            size = elk.ElkAttribute(builder='_build_size')
+
+        class Thing(elk.Elk):
+            __with__ = HasSize
+
+            def _build_size(self):
+                return 'small'
+
+        self.assertEqual(Thing().size, 'small')
