@@ -1,0 +1,230 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Method Modifiers &mdash; elk 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="elk 0.1 documentation" href="index.html" />
+    <link rel="next" title="Roles" href="roles.html" />
+    <link rel="prev" title="Attributes" href="attributes.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="roles.html" title="Roles"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="attributes.html" title="Attributes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="method-modifiers">
+<h1>Method Modifiers<a class="headerlink" href="#method-modifiers" title="Permalink to this headline">¶</a></h1>
+<p>Elk provides a feature called &#8220;method modifiers&#8221;.  You can also
+think of these as &#8220;hooks&#8221; or &#8220;advice&#8221;.</p>
+<p>It&#8217;s probably easiest to understand this feature with a few
+examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;    foo&quot;</span>
+
+    <span class="nd">@elk.before</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_before_foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;about to call foo&quot;</span>
+
+    <span class="nd">@elk.after</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_after_foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;just called foo&quot;</span>
+
+    <span class="nd">@elk.around</span><span class="p">(</span><span class="s">&#39;foo&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_around_foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;  I&#39;m around foo&quot;</span>
+        <span class="k">yield</span>
+        <span class="k">print</span> <span class="s">&quot;  I&#39;m still around foo&quot;</span>
+</pre></div>
+</div>
+<p>Calling <tt class="docutils literal"><span class="pre">Example().foo()</span></tt> will produce the following output:</p>
+<div class="highlight-python"><pre>about to call foo
+  I'm around foo
+    foo
+  I'm still around foo
+just called foo</pre>
+</div>
+<p>As you can see, the <tt class="docutils literal"><span class="pre">before</span></tt> modifiers come before <tt class="docutils literal"><span class="pre">around</span></tt>
+modifiers, and <tt class="docutils literal"><span class="pre">after</span></tt> modifiers come last.</p>
+<p>When there are multiple modifiers of the same type, the <tt class="docutils literal"><span class="pre">before</span></tt>
+and <tt class="docutils literal"><span class="pre">around</span></tt> modifiers run from the last added to the first, and
+<tt class="docutils literal"><span class="pre">after</span></tt> modifiers run from first added to last:</p>
+<div class="highlight-python"><pre>before 2
+ before 1
+  around 2
+   around 1
+    primary
+   around 1
+  around 2
+ after 1
+after 2</pre>
+</div>
+<div class="section" id="before-after-and-around">
+<h2><tt class="docutils literal"><span class="pre">before</span></tt>, <tt class="docutils literal"><span class="pre">after</span></tt> and <tt class="docutils literal"><span class="pre">around</span></tt><a class="headerlink" href="#before-after-and-around" title="Permalink to this headline">¶</a></h2>
+<p>Method modifiers can be used to add behavior to methods without
+modifying the definition of those methods.</p>
+<div class="section" id="before-and-after-modifiers">
+<h3><tt class="docutils literal"><span class="pre">before</span></tt> and <tt class="docutils literal"><span class="pre">after</span></tt> modifiers<a class="headerlink" href="#before-and-after-modifiers" title="Permalink to this headline">¶</a></h3>
+<p>One use the <tt class="docutils literal"><span class="pre">before</span></tt> modifier would be to do some sort of
+prechecking on a method call.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">set_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+
+<span class="nd">@elk.before</span><span class="p">(</span><span class="s">&#39;set_size&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_before_set_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_growing</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;cannot set size while person is growing&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Similarly, an <tt class="docutils literal"><span class="pre">after</span></tt> modifier could be used for logging an action
+that was taken.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The name of the method modifier <em>must be unique</em>.  Beyond this the
+name is of little consequence, but it is recommended to begin with
+an underscore if it is not part of the class&#8217; public API (it
+probably isn&#8217;t).</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The return values of both <tt class="docutils literal"><span class="pre">before</span></tt> and <tt class="docutils literal"><span class="pre">after</span></tt> modifiers are
+ignored.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The method modifier must accept the same arguments as the original
+method.</p>
+</div>
+</div>
+<div class="section" id="around-modifiers">
+<h3><tt class="docutils literal"><span class="pre">around</span></tt> modifiers<a class="headerlink" href="#around-modifiers" title="Permalink to this headline">¶</a></h3>
+<p>An <tt class="docutils literal"><span class="pre">around</span></tt> modifier is more powerful than either a <tt class="docutils literal"><span class="pre">before</span></tt> or
+<tt class="docutils literal"><span class="pre">after</span></tt> modifier.  It can modify the arguments being passed to the
+original method, and you can even decide to simply not call the
+original method at all. You can also modify the return value with an
+<tt class="docutils literal"><span class="pre">around</span></tt> modifier.</p>
+<p>An <tt class="docutils literal"><span class="pre">around</span></tt> modifier receives the original method as the first
+positional argument after <tt class="docutils literal"><span class="pre">self</span></tt>.  By convention, the original
+method is referred to as <tt class="docutils literal"><span class="pre">orig</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@elk.around</span><span class="p">(</span><span class="s">&#39;set_size&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_around_set_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orig</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">likes_small_things</span><span class="p">():</span>
+        <span class="n">size</span> <span class="o">/=</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">orig</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">orig</span></tt> is a <em>bound method</em>, meaning that it is called directly
+without passing <tt class="docutils literal"><span class="pre">self</span></tt> as the first argument.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Method Modifiers</a><ul>
+<li><a class="reference internal" href="#before-after-and-around"><tt class="docutils literal"><span class="pre">before</span></tt>, <tt class="docutils literal"><span class="pre">after</span></tt> and <tt class="docutils literal"><span class="pre">around</span></tt></a><ul>
+<li><a class="reference internal" href="#before-and-after-modifiers"><tt class="docutils literal"><span class="pre">before</span></tt> and <tt class="docutils literal"><span class="pre">after</span></tt> modifiers</a></li>
+<li><a class="reference internal" href="#around-modifiers"><tt class="docutils literal"><span class="pre">around</span></tt> modifiers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="attributes.html"
+                        title="previous chapter">Attributes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="roles.html"
+                        title="next chapter">Roles</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/modifiers.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="roles.html" title="Roles"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="attributes.html" title="Attributes"
+             >previous</a> |</li>
+        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fraser Tweedale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Roles &mdash; elk 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="elk 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Method Modifiers" href="modifiers.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modifiers.html" title="Method Modifiers"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="roles">
+<h1>Roles<a class="headerlink" href="#roles" title="Permalink to this headline">¶</a></h1>
+<p>A role encapsulates some piece of behavior or state that can be
+shared between classes. It is something that classes do. It is
+important to understand that <em>roles are not normal classes</em>. You
+cannot inherit from a role, and a role cannot be instantiated. We
+sometimes say that roles are <em>consumed</em>, either by classes or other
+roles.</p>
+<p>Instead, a role is <em>composed</em> into a class. In practical terms, this
+means that all of the methods, method modifiers, and attributes
+defined in a role are added directly to (we sometimes say &#8220;flattened
+into&#8221;) the class that consumes the role. These attributes and
+methods then appear as if they were defined in the class itself. A
+subclass of the consuming class will inherit all of these methods
+and attributes.</p>
+<p>Elk roles are similar to mixins in other languages.</p>
+<div class="section" id="a-simple-role">
+<h2>A simple role<a class="headerlink" href="#a-simple-role" title="Permalink to this headline">¶</a></h2>
+<p>Creating a role looks a lot like creating a Moose class:</p>
+<div class="highlight-python"><pre>class Breakable(elk.ElkRole):
+    is_broken = elk.ElkAttribute(type=bool)
+
+    def break(self):
+        print "I broke"
+        self.is_broken = True</pre>
+</div>
+<p>This looks just like a regular Elk class, except that we extend
+<tt class="docutils literal"><span class="pre">ElkRole</span></tt>.  Attempting to instantiate <tt class="docutils literal"><span class="pre">Breakable</span></tt> will raise
+<tt class="docutils literal"><span class="pre">TypeError</span></tt>.</p>
+<p>The attributes and methods of a role will be composed into classes
+that use the role:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Car</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">__with__</span> <span class="o">=</span> <span class="n">Breakable</span>
+
+    <span class="n">engine</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">Engine</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">__with__</span></tt> declaration specifies the roles to be composed into
+a class.  It can be a single <tt class="docutils literal"><span class="pre">ElkRole</span></tt> or an iterable of roles.
+When the class is defined, the <tt class="docutils literal"><span class="pre">ElkMeta</span></tt> metaclass composes the
+attributes and methods in the role into the consumer.
+<tt class="docutils literal"><span class="pre">isinstance(Consumer(),</span> <span class="pre">Role)</span></tt> and <tt class="docutils literal"><span class="pre">issubclass(Consumer,</span> <span class="pre">Role)</span></tt>
+will also return <tt class="docutils literal"><span class="pre">True</span></tt>:</p>
+<div class="highlight-python"><pre>car = Car(engine=Engine())
+
+print 'Busted' if car.is_broken else 'Still working'
+car.break()
+print 'Busted' if car.is_broken else 'Still working'
+
+isinstance(car, Breakable)  # True</pre>
+</div>
+<p>This prints:</p>
+<div class="highlight-python"><pre>Still working
+I broke
+Busted</pre>
+</div>
+<p>We could use this same <tt class="docutils literal"><span class="pre">Breakable</span></tt> role in a <tt class="docutils literal"><span class="pre">Bone</span></tt> class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Bone</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">__with__</span> <span class="o">=</span> <span class="n">Breakable</span>
+
+    <span class="n">marrow</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">Marrow</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">__with__</span></tt> must be specified only once.  Declaring it multiple
+times will override the earlier declarations.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Roles</a><ul>
+<li><a class="reference internal" href="#a-simple-role">A simple role</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="modifiers.html"
+                        title="previous chapter">Method Modifiers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/roles.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modifiers.html" title="Method Modifiers"
+             >previous</a> |</li>
+        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fraser Tweedale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

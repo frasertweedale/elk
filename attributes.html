@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Attributes &mdash; elk 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="elk 0.1 documentation" href="index.html" />
+    <link rel="next" title="Method Modifiers" href="modifiers.html" />
+    <link rel="prev" title="Classes" href="classes.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modifiers.html" title="Method Modifiers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="attributes">
+<h1>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h1>
+<p>Elk attributes have many properties.  You can create a powerful
+class simply by declaring attributes.</p>
+<p>An attributes is a property that every member of a class has.  For
+example, every <tt class="docutils literal"><span class="pre">Person</span></tt> might have a name and a date of birth.
+Attributes can be optional, so some <tt class="docutils literal"><span class="pre">Person</span></tt> objects might have a
+tax file number, and some might not.</p>
+<p>At its simplest, an attribute can be thought of as a named value
+that can be read and set.  However, attributes can also have
+defaults, type constraints, delegation and much more.</p>
+<div class="section" id="attribute-options">
+<h2>Attribute options<a class="headerlink" href="#attribute-options" title="Permalink to this headline">¶</a></h2>
+<p>The options passed to <tt class="docutils literal"><span class="pre">ElkAttribute</span></tt> define the properties of the
+attribute.  There are many options but none are required.</p>
+<div class="section" id="read-write-versus-read-only">
+<h3>Read-write versus read-only<a class="headerlink" href="#read-write-versus-read-only" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">mode</span></tt> option is used to control whether an attribute is
+read-only (<tt class="docutils literal"><span class="pre">&quot;ro&quot;</span></tt>) or read-write (<tt class="docutils literal"><span class="pre">&quot;rw&quot;</span></tt>).  When an attribute is
+read-only, attempting to set or delete its value raises
+<tt class="docutils literal"><span class="pre">AttributeError</span></tt>.</p>
+</div>
+<div class="section" id="required-or-not">
+<h3>Required or not?<a class="headerlink" href="#required-or-not" title="Permalink to this headline">¶</a></h3>
+<p>By default, all attributes are optional and do not need to be
+provided when an object is constructed.  If you want to make an
+object required, simply set the <tt class="docutils literal"><span class="pre">required</span></tt> option to <tt class="docutils literal"><span class="pre">True</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="n">required</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Constructing an object without supplying required attributes (as
+keyword arguments) will raise <tt class="docutils literal"><span class="pre">AttributeError</span></tt>.  Attempting to
+delete a required attribute will also raise <tt class="docutils literal"><span class="pre">AttributeError</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">()</span>               <span class="c"># raises AttributeError</span>
+<span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Alice&#39;</span><span class="p">)</span>   <span class="c"># ok</span>
+<span class="k">del</span> <span class="n">person</span><span class="o">.</span><span class="n">name</span>                 <span class="c"># raises AttributeError</span>
+</pre></div>
+</div>
+<p>Using <tt class="docutils literal"><span class="pre">required</span></tt> alongside <tt class="docutils literal"><span class="pre">default</span></tt> or <tt class="docutils literal"><span class="pre">builder</span></tt> relaxes the
+need to supply a value to the constructor, but if a value is given
+it is preferred over the default value.</p>
+</div>
+<div class="section" id="default-and-builder-methods">
+<h3>Default and builder methods<a class="headerlink" href="#default-and-builder-methods" title="Permalink to this headline">¶</a></h3>
+<p>Attributes can have default values, and Elk provides two ways to
+specify that default.</p>
+<p>In the simplest form, simply provide a value for the <tt class="docutils literal"><span class="pre">default</span></tt>
+option:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TeeShirt</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s">&quot;medium&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If the size attribute is not provided to the constructor, it will be
+set to <tt class="docutils literal"><span class="pre">&quot;medium&quot;</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">shirt</span> <span class="o">=</span> <span class="n">TeeShirt</span><span class="p">()</span>
+<span class="n">shirt</span><span class="o">.</span><span class="n">size</span>           <span class="c"># &quot;medium&quot;</span>
+</pre></div>
+</div>
+<p>You can also provide a callable for <tt class="docutils literal"><span class="pre">default</span></tt>.  The callable will
+be called with the object as the single argument and its return
+value will be the value of the attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span>
+
+<span class="k">class</span> <span class="nc">TeeShirt</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span>
+        <span class="n">default</span><span class="o">=</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s">&#39;small&#39;</span><span class="p">,</span> <span class="s">&#39;medium&#39;</span><span class="p">,</span> <span class="s">&#39;large&#39;</span><span class="p">])</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a trivial example, but it illustrates the point that the
+callable will be called for every new object created.</p>
+<p>When the <tt class="docutils literal"><span class="pre">default</span></tt> is called during object construction, it may be
+called before other attributes have been set.  if your default is
+dependent on other parts of the object&#8217;s state, you can make the
+attribute <tt class="docutils literal"><span class="pre">lazy</span></tt>.</p>
+<p>As an alternative to directly using a callable, you can supply a
+<tt class="docutils literal"><span class="pre">builder</span></tt> method for your attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TeeShirt</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="n">builder</span><span class="o">=</span><span class="s">&#39;_build_size&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_build_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s">&#39;small&#39;</span><span class="p">,</span> <span class="s">&#39;medium&#39;</span><span class="p">,</span> <span class="s">&#39;large&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This has several advantages.  First, it moves a chunk of code to its
+own named method, which improves readability and separation of
+concerns.  Second, because this is a <em>named</em> method, it can be
+extended or overridden by a subclass.</p>
+<p>It is strongly recommended to use a <tt class="docutils literal"><span class="pre">builder</span></tt> instead of a
+<tt class="docutils literal"><span class="pre">default</span></tt> for anything beyond the most trivial default.</p>
+<p>A <tt class="docutils literal"><span class="pre">builder</span></tt>, just like a <tt class="docutils literal"><span class="pre">default</span></tt>, is called with the object as
+the single argument.</p>
+<div class="section" id="builders-allow-subclassing">
+<h4>Builders allow subclassing<a class="headerlink" href="#builders-allow-subclassing" title="Permalink to this headline">¶</a></h4>
+<p>Because the <tt class="docutils literal"><span class="pre">builder</span></tt> is called <em>by name</em>, builder methods are
+both inheritable and overridable.</p>
+<p>If we subclass our our <tt class="docutils literal"><span class="pre">TeeShirt</span></tt> class, we can override
+<tt class="docutils literal"><span class="pre">_build_size</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">SmallTeeShirt</span><span class="p">(</span><span class="n">TeeShirt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_build_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;small&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="builders-work-well-with-roles">
+<h4>Builders work well with roles<a class="headerlink" href="#builders-work-well-with-roles" title="Permalink to this headline">¶</a></h4>
+<p>Because builders are called by name, they work well with
+<a class="reference internal" href="roles.html"><em>Roles</em></a>. For example, a role could provide an attribute but
+require that the consuming class provide the builder:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">HasSize</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">ElkRole</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="n">builder</span><span class="o">=</span><span class="s">&#39;_build_size&#39;</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Thing</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">__with__</span> <span class="o">=</span> <span class="n">HasSize</span>
+
+    <span class="k">def</span> <span class="nf">_build_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;small&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="laziness">
+<h3>Laziness<a class="headerlink" href="#laziness" title="Permalink to this headline">¶</a></h3>
+<p>Elk lets you defer attribute population by making an attribute
+<tt class="docutils literal"><span class="pre">lazy</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TeeShirt</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="n">builder</span><span class="o">=</span><span class="s">&#39;_build_size&#39;</span><span class="p">,</span> <span class="n">lazy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When <tt class="docutils literal"><span class="pre">lazy</span></tt> is true, the default is not generated until the
+attribute is read, rather than at object construction time.  There
+are several reasons why you might choose to do this:</p>
+<ul class="simple">
+<li>If the value depends on other attributes, then the attribute
+<em>must</em> be lazy because the order in which attribute values are set
+during object construction is not specified.</li>
+<li>Making an attribute <tt class="docutils literal"><span class="pre">lazy</span></tt> lets you defer the cost of computing
+its value until it is needed.  If the attribute is never read, you
+avoid doing the work at all.</li>
+</ul>
+<p>It is recommended to make any attribute with a builder or
+non-trivial default <tt class="docutils literal"><span class="pre">lazy</span></tt> as a matter of course.</p>
+</div>
+<div class="section" id="constructor-parameters">
+<h3>Constructor parameters<a class="headerlink" href="#constructor-parameters" title="Permalink to this headline">¶</a></h3>
+<p>By default, each attribute can be passed by name to the class&#8217;s
+constructor. On occasion, you may want to use a different name for
+the constructor parameter. You may also want to make an attribute
+unsettable via the constructor.</p>
+<p>You can do either of these things with the <tt class="docutils literal"><span class="pre">init_arg</span></tt> option:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">TeeShirt</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">bigness</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="n">init_arg</span><span class="o">=</span><span class="s">&#39;size&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now we have an attributed named <tt class="docutils literal"><span class="pre">&quot;bigness&quot;</span></tt>, but we pass <tt class="docutils literal"><span class="pre">size</span></tt>
+to the constructor.</p>
+<p>Even more useful is the ability to disable setting an attribute via
+the constructor.  This is particularly handy for private
+attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">_genetic_code</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span>
+    <span class="n">lazy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">builder</span><span class="o">=</span><span class="s">&#39;_build_genetic_code&#39;</span><span class="p">,</span>
+    <span class="n">init_arg</span><span class="o">=</span><span class="bp">None</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>By setting the <tt class="docutils literal"><span class="pre">init_arg</span></tt> to <tt class="docutils literal"><span class="pre">None</span></tt> we make it impossible to set
+this attribute when creating a new object.  Attempting to do so
+raises <tt class="docutils literal"><span class="pre">TypeError</span></tt>.</p>
+</div>
+<div class="section" id="type-constraints">
+<h3>Type constraints<a class="headerlink" href="#type-constraints" title="Permalink to this headline">¶</a></h3>
+<p>Attributes can be restricted to only accept certain types.  For
+example, to restrict an attribute to strings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">first_name</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is also possible to restrict values to one of a set of types by
+specifying a <tt class="docutils literal"><span class="pre">tuple</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">x</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">complex</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Constructing with or assigning a value of the wrong type will raise
+<tt class="docutils literal"><span class="pre">TypeError</span></tt>.</p>
+</div>
+<div class="section" id="delegation">
+<h3>Delegation<a class="headerlink" href="#delegation" title="Permalink to this headline">¶</a></h3>
+<p>An attribute can define names that will be added to the object and
+will delegate to the attribute&#8217;s value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">color</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">Color</span><span class="p">,</span> <span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;as_hex_string&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>This will add the <tt class="docutils literal"><span class="pre">as_hex_string</span></tt> method to the object containing
+the attribute, which when called will call <tt class="docutils literal"><span class="pre">as_hex_string</span></tt> on the
+attribute value, as if <tt class="docutils literal"><span class="pre">obj.color.as_hex_string</span></tt> had been called.</p>
+<p>You can delegate to methods, Elk attributes or regular attributes.
+Attribute assignment and deletion works as normal through
+delegations.</p>
+</div>
+</div>
+<div class="section" id="attribute-inheritance">
+<h2>Attribute inheritance<a class="headerlink" href="#attribute-inheritance" title="Permalink to this headline">¶</a></h2>
+<p>A subclass inherits all of its base class(es)&#8217; attributes as-is.
+However, you can override the inherited attribute.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Attributes</a><ul>
+<li><a class="reference internal" href="#attribute-options">Attribute options</a><ul>
+<li><a class="reference internal" href="#read-write-versus-read-only">Read-write versus read-only</a></li>
+<li><a class="reference internal" href="#required-or-not">Required or not?</a></li>
+<li><a class="reference internal" href="#default-and-builder-methods">Default and builder methods</a><ul>
+<li><a class="reference internal" href="#builders-allow-subclassing">Builders allow subclassing</a></li>
+<li><a class="reference internal" href="#builders-work-well-with-roles">Builders work well with roles</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#laziness">Laziness</a></li>
+<li><a class="reference internal" href="#constructor-parameters">Constructor parameters</a></li>
+<li><a class="reference internal" href="#type-constraints">Type constraints</a></li>
+<li><a class="reference internal" href="#delegation">Delegation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#attribute-inheritance">Attribute inheritance</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="classes.html"
+                        title="previous chapter">Classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modifiers.html"
+                        title="next chapter">Method Modifiers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/attributes.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modifiers.html" title="Method Modifiers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="classes.html" title="Classes"
+             >previous</a> |</li>
+        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013, Fraser Tweedale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>
