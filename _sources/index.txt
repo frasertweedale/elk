@@ -20,7 +20,11 @@
 Elk
 ***
 
-Elk is an object system for Python inspired by Moose_.
+Elk is an object system for Python inspired by Moose_.  It aspires
+to implement the features of Moose in idiomatic Python.
+
+Elk is written in pure Python (2.7) and there are no dependencies
+beyond the standard library.
 
 .. _Moose: https://metacpan.org/module/Moose
 
@@ -40,8 +44,8 @@ Copyright and license
 
 Elk is Copyright (C) 2012, 2013 Fraser Tweedale.
 
-The Elk manual is Copyright (C) Infinity Interactive, Inc.
-and Fraser Tweedale.
+The Elk manual is Copyright (C) 2013 Infinity Interactive, Inc.
+and Copyright (C) 2013 Fraser Tweedale.
 
 Elk is `free software`_: you can redistribute it and/or modify
 it under the terms of the `GNU General Public License`_ as published by
@@ -51,6 +55,20 @@ the Free Software Foundation, either version 3 of the License, or
 .. _free software: http://www.gnu.org/philosophy/free-sw.html
 .. _GNU General Public License: http://www.gnu.org/licenses/gpl.html
 
+
+Contributing
+============
+
+The Elk source code is available from
+https://github.com/frasertweedale/elk.  Bug reports, patches,
+feature requests, code review and documentation are welcomed.
+
+To contribute patches, please use :command:`git send-email` or generate a
+pull request on GitHub.  Write a `well formed commit message`_.  If
+your patch is nontrivial, update the copyright notice at the top of
+each changed file.
+
+.. _well formed commit message: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
 
 Indices and tables
 ==================
