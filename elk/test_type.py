@@ -84,6 +84,10 @@ class TypeTestCase(unittest.TestCase):
         with self.assertRaises(TypeError):
             x.a_only = 10
 
+    def test_init_with_wrong_type_raises_TypeError(self):
+        with self.assertRaises(TypeError):
+            Thing(one_type='wrong')
+
 
 class BadDefaultTestCase(unittest.TestCase):
     def test_bad_default(self):
