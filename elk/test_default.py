@@ -1,5 +1,5 @@
 # This file is part of elk
-# Copyright (C) 2012 Fraser Tweedale
+# Copyright (C) 2012, 2013 Fraser Tweedale
 #
 # elk is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,24 +48,17 @@ class DefaultTestCase(unittest.TestCase):
         with self.assertRaises(AttributeError):
             a.z
 
-    def test_callable_default(self):
+    def test_callable_receives_obj_and_returns_value(self):
         """Callable default is called to generate default."""
-        class B(object):
-            __metaclass__ = elk.ElkMeta
-            x = elk.ElkAttribute(default=lambda: [])
+        class B(elk.Elk):
+            x = elk.ElkAttribute(default=lambda self: self)
+            lazy_x = elk.ElkAttribute(default=lambda self: self, lazy=True)
+            y = elk.ElkAttribute(default=lambda self: 'hi')
 
-        b1 = B()
-        b2 = B()
-        self.assertEqual(b1.x, [])
-        self.assertEqual(b2.x, [])
-        self.assertIsNot(b1.x, b2.x)
-
-    def test_callable_default_expects_args(self):
-        """Callable default that expects args raises TypeError."""
-        with self.assertRaises(TypeError):
-            class B(object):
-                __metaclass__ = elk.ElkMeta
-                x = elk.ElkAttribute(default=lambda x: [])
+        b = B()
+        self.assertEqual(b.x, b)
+        self.assertEqual(b.lazy_x, b)
+        self.assertEqual(b.y, 'hi')
 
     def test_nonhashable_default(self):
         """Nonhashable default raises TypeError."""

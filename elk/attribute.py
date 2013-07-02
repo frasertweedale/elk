@@ -1,5 +1,5 @@
 # This file is part of elk
-# Copyright (C) 2012 Fraser Tweedale
+# Copyright (C) 2012, 2013 Fraser Tweedale
 #
 # elk is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import functools
 import types
 
 
@@ -72,15 +73,12 @@ class AttributeDescriptor(object):
         self._has_default = True if 'default' in kwargs else False
         self._default = kwargs.get('default')
         if self._has_default:
-            if callable(self._default):
-                self._default()  # check that no args expected
-            else:
-                try:
-                    hash(self._default)
-                except:
-                    raise TypeError(
-                        "unhashable default must be wrapped in callable"
-                    )
+            try:
+                hash(self._default)
+            except:
+                raise TypeError(
+                    "unhashable default must be wrapped in callable"
+                )
 
         # check and store builder
         if builder is not None and not isinstance(builder, str):
@@ -154,12 +152,15 @@ class AttributeDescriptor(object):
         if self._has_default:
             default = self._default
             if self._lazy:
-                instance.__elk_lazy__[id(self)] = \
-                    default if callable(default) else lambda: default
+                if callable(default):
+                    f = functools.partial(default, instance)
+                else:
+                    f = lambda: default
+                instance.__elk_lazy__[id(self)] = f
             else:
                 self.__set__(
                     instance,
-                    default() if callable(default) else default,
+                    default(instance) if callable(default) else default,
                     force=True
                 )
             return True
