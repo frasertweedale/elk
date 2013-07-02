@@ -19,18 +19,14 @@ import unittest
 from . import elk
 
 
-class Role(object):
-    __metaclass__ = elk.ElkRole
-
+class Role(elk.ElkRole):
     role_attr = elk.ElkAttribute(default='a')
 
     def role_method(self):
         return 'value'
 
 
-class AnotherRole(object):
-    __metaclass__ = elk.ElkRole
-
+class AnotherRole(elk.ElkRole):
     another_role_attr = elk.ElkAttribute(default='b')
 
     def another_role_method(self):
@@ -118,9 +114,7 @@ class RoleTestCase(unittest.TestCase):
             Role()
 
 
-class Breakable:
-    __metaclass__ = elk.ElkRole
-
+class Breakable(elk.ElkRole):
     is_broken = elk.ElkAttribute(mode='rw', type=bool, default=False)
 
     def break_(self):

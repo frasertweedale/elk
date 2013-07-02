@@ -62,8 +62,7 @@ class BuilderTestCase(unittest.TestCase):
 
 
     def test_role_consumer_can_supply_builder_for_role_attribute(self):
-        class HasSize(object):
-            __metaclass__ = elk.ElkRole
+        class HasSize(elk.ElkRole):
             size = elk.ElkAttribute(builder='_build_size')
 
         class Thing(elk.Elk):

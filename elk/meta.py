@@ -28,7 +28,7 @@ class ElkMeta(type):
             roles = (roles,)
         badroles = [
             role for role in roles
-            if not issubclass(type(role), ElkRole)
+            if not issubclass(type(role), ElkRoleMeta)
         ]
         if badroles:
             raise TypeError(
@@ -36,7 +36,7 @@ class ElkMeta(type):
             )
         dict['__elk_roles__'] = roles
         for role in roles:
-            ElkRole.apply_to_class_dict(dict, role)
+            ElkRoleMeta.apply_to_class_dict(dict, role)
 
         # initialise attributes
         attrdescs = {}
@@ -96,7 +96,7 @@ class ElkMeta(type):
         return obj
 
 
-class ElkRole(type):
+class ElkRoleMeta(type):
     def __call__(self, *args, **kwargs):
         raise TypeError('Roles cannot be instantiated directly.')
 
@@ -119,3 +119,7 @@ class ElkRole(type):
 
 class Elk(object):
     __metaclass__ = ElkMeta
+
+
+class ElkRole(object):
+    __metaclass__ = ElkRoleMeta
