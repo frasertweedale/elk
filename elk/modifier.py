@@ -75,14 +75,7 @@ class AroundModifier(Modifier):
         else:
             get_orig = lambda i: getattr(super(type(i), i), self._name)
         def wrapped(instance, *args, **kwargs):
-            gen = self._f(instance, *args, **kwargs)
-            next(gen)
-            result = get_orig(instance)(*args, **kwargs)
-            try:
-                next(gen)
-            except StopIteration:
-                pass
-            return result
+            return self._f(instance, get_orig(instance), *args, **kwargs)
         dict[self._name] = wrapped
 
 
