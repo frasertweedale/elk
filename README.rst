@@ -3,11 +3,6 @@ Synopsis
 
 ::
 
-    pip install elk
-
-
-::
-
     import elk
 
 
@@ -28,11 +23,11 @@ Synopsis
             self.z = 0
 
 
-What is ``elk``?
-----------------
+What is Elk?
+------------
 
-``elk`` is an object system for Python inspired by Moose_ for Perl.
-It implements many of the features of Moose including:
+Elk (homepage_) is an object system for Python inspired by Moose_
+for Perl.  It implements many of the features of Moose including:
 
 * attribute delegation
 * default attribute values
@@ -43,30 +38,39 @@ It implements many of the features of Moose including:
 * roles
 * method modifiers
 
+.. _homepage: http://frasertweedale.github.io/elk
 .. _Moose: https://metacpan.org/module/Moose
 
-``elk`` is written in pure Python and there are no dependencies
-beyond the standard library.
+Elk is written in pure Python and there are no dependencies beyond
+the standard library.
 
 
-How does ``elk`` differ from Moose?
------------------------------------
+How does Elk differ from Moose?
+-------------------------------
 
-Moose has many features that are not (yet) implemented in ``elk``.
+Moose has many features that are not (yet) implemented in Elk.
 
-While ``elk`` tries to faithfully implement Moose paradigms and
-patterns in Python, it uses Python idioms and language features as
-much as possible.  There are also some differences in terminology in
-order to be consistent with Python terminology or idioms.
+While Elk tries to faithfully implement Moose paradigms and patterns
+in Python, it uses Python idioms and language features as much as
+possible.  There are also some differences in terminology in order
+to be consistent with Python terminology or idioms.
 
-There is not yet a namespace for ``elk`` extensions, nor any
-convenient mechanisms for extending it.
+There is not yet a namespace for Elk extensions, nor any convenient
+mechanism for extending it.
+
+
+Installation
+------------
+
+::
+
+    pip install elk
 
 
 License
 -------
 
-``elk`` is free software: you can redistribute it and/or modify
+Elk is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
@@ -75,8 +79,11 @@ the Free Software Foundation, either version 3 of the License, or
 Contributing
 ------------
 
-Bug reports, patches, feature requests and documentation are
-welcomed.
+The Elk source code is available from
+https://github.com/frasertweedale/elk.
+
+Bug reports, patches, feature requests, code review and
+documentation are welcomed.
 
 To submit a patch, please use ``git send-email`` or generate a pull
 request.  Write a `well formed commit message`_.  If your patch is

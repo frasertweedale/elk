@@ -10,7 +10,7 @@ setup(
     author_email='frase@frase.id.au',
     description='Moose-like object system for Python',
     long_description=readme,
-    url='https://github.com/frasertweedale/elk',
+    url='https://frasertweedale.github.io/elk',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
