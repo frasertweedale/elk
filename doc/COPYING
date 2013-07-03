@@ -1,0 +1,19 @@
+The Elk documentation reproduces and/or modifies parts of
+Moose::Manual and could be considered a derivative work.
+
+Moose::Manual [1] is part of the standard Moose distribution and is
+Copyright (C) 2013 Infinity Interactive, Inc. and conveyed under the
+same terms as Perl 5 itself [2], i.e. under the terms of either:
+
+a) the GNU General Public License as published by the Free Software
+   Foundation; either version 1, or (at your option) any later
+   version, or
+b) the "Artistic License".
+
+Elk is released under the GNU General Public License Version 3 or
+later, so it is under these terms that portions of Moose::Manual and
+and its chapters are redistributed, modified and/or conveyed as part
+of Elk.
+
+[1] https://metacpan.org/module/Moose::Manual
+[2] http://dev.perl.org/licenses/
