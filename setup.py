@@ -1,11 +1,13 @@
 from setuptools import setup, find_packages
 
+import elk
+
 with open('README.rst') as f:
     readme = f.read()
 
 setup(
     name='elk',
-    version='0.1',
+    version=elk.__version__,
     author='Fraser Tweedale',
     author_email='frase@frase.id.au',
     description='Moose-like object system for Python',

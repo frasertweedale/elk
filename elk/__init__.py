@@ -1,5 +1,5 @@
 # This file is part of elk
-# Copyright (C) 2012 Fraser Tweedale
+# Copyright (C) 2012, 2013 Fraser Tweedale
 #
 # elk is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,3 +15,4 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from .elk import *
+from .elk import __version__
