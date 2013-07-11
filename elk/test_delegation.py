@@ -19,18 +19,15 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     b = elk.ElkAttribute(handles=['attr', 'method'])
 
 
-class B(object):
-    __metaclass__ = elk.ElkMeta
+class B(elk.Elk):
     c = elk.ElkAttribute(handles=['attr', 'method'])
 
 
-class C(object):
-    __metaclass__ = elk.ElkMeta
+class C(elk.Elk):
     attr = elk.ElkAttribute(default=10)
 
     def method(self):

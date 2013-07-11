@@ -19,8 +19,7 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     ro = elk.ElkAttribute(mode='ro')
     ro_default = elk.ElkAttribute(mode='ro', default=10)
     rw = elk.ElkAttribute(mode='rw')
@@ -31,8 +30,7 @@ class ModeTestCase(unittest.TestCase):
     def test_bogus_mode(self):
         """Only 'ro' and 'rw' are valid."""
         with self.assertRaises(TypeError):
-            class B(object):
-                __metaclass__ = elk.ElkMeta
+            class B(elk.Elk):
                 attr = elk.ElkAttribute(mode='bogus')
 
     def test_ro(self):

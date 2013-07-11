@@ -33,8 +33,7 @@ class InitArgTestCase(unittest.TestCase):
     def test_init_arg_non_str(self):
         """Non-str ``init_arg`` value raises TypeError."""
         with self.assertRaises(TypeError):
-            class B(object):
-                __metaclass__ = elk.ElkMeta
+            class B(elk.Elk):
                 x = elk.ElkAttribute(init_arg=10)
 
     def test_none_disables_setting_via_constructor(self):

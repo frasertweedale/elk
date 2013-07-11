@@ -25,8 +25,7 @@ class A(object):
     pass
 
 
-class Thing(object):
-    __metaclass__ = elk.ElkMeta
+class Thing(elk.Elk):
     any_type = elk.ElkAttribute()
     none = elk.ElkAttribute(type=None)
     one_type = elk.ElkAttribute(type=int)
@@ -92,6 +91,5 @@ class TypeTestCase(unittest.TestCase):
 class BadDefaultTestCase(unittest.TestCase):
     def test_bad_default(self):
         with self.assertRaises(TypeError):
-            class BadDefaultThing(object):
-                __metaclass__ = elk.ElkMeta
+            class BadDefaultThing(elk.Elk):
                 bad = elk.ElkAttribute(type=bool, default=10)

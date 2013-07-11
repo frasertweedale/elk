@@ -41,8 +41,7 @@ class InitialisationTestCase(unittest.TestCase):
         self.assertEqual(a.x, 10)
 
 
-class OverrideChecker(object):
-    __metaclass__ = elk.ElkMeta
+class OverrideChecker(elk.Elk):
     default = elk.ElkAttribute(default=10)
     builder = elk.ElkAttribute(builder='_build')
     default_and_builder = elk.ElkAttribute(default=10, builder='_build')
@@ -62,8 +61,7 @@ class InitialisationOrderTestCase(unittest.TestCase):
     """
 
     def test_value_before_builder(self):
-        class B(object):
-            __metaclass__ = elk.ElkMeta
+        class B(elk.Elk):
             value = elk.ElkAttribute()
             builder = elk.ElkAttribute(builder='_build')
 
@@ -76,8 +74,7 @@ class InitialisationOrderTestCase(unittest.TestCase):
         self.assertEqual(b.builder, 11)
 
     def test_default_before_builder(self):
-        class B(object):
-            __metaclass__ = elk.ElkMeta
+        class B(elk.Elk):
             default = elk.ElkAttribute(default=10)
             builder = elk.ElkAttribute(builder='_build')
 

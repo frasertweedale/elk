@@ -19,8 +19,7 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     x = elk.ElkAttribute(default=10)
     y = elk.ElkAttribute(default=None)
     z = elk.ElkAttribute()
@@ -63,6 +62,5 @@ class DefaultTestCase(unittest.TestCase):
     def test_nonhashable_default(self):
         """Nonhashable default raises TypeError."""
         with self.assertRaises(TypeError):
-            class B(object):
-                __metaclass__ = elk.ElkMeta
+            class B(elk.Elk):
                 x = elk.ElkAttribute(default=[])

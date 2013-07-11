@@ -33,8 +33,7 @@ class AnotherRole(elk.ElkRole):
         return 'another value'
 
 
-class Consumer(object):
-    __metaclass__ = elk.ElkMeta
+class Consumer(elk.Elk):
     __with__ = Role
 
 
@@ -42,13 +41,12 @@ class SubConsumer(Consumer):
     pass
 
 
-class MultiConsumer(object):
-    __metaclass__ = elk.ElkMeta
+class MultiConsumer(elk.Elk):
     __with__ = Role, AnotherRole
 
 
-class NonConsumer(object):
-    __metaclass__ = elk.ElkMeta
+class NonConsumer(elk.Elk):
+    pass
 
 
 class RoleTestCase(unittest.TestCase):
@@ -105,8 +103,7 @@ class RoleTestCase(unittest.TestCase):
             a = 1
 
         with self.assertRaises(TypeError):
-            class BogoConsumer(object):
-                __metaclass__ = elk.ElkMeta
+            class BogoConsumer(elk.Elk):
                 __with__ = NonRole
 
     def test_cannot_instantiate_role(self):
@@ -125,8 +122,7 @@ class Engine:
     pass
 
 
-class Car:
-    __metaclass__ = elk.ElkMeta
+class Car(elk.Elk):
     __with__ = Breakable
 
     engine = elk.ElkAttribute(mode='ro', type=Engine)

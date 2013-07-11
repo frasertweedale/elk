@@ -31,8 +31,7 @@ class LazyDefaultChecker(object):
 checker = LazyDefaultChecker()
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     non_lazy = elk.ElkAttribute(lazy=True)
     trivial_default = elk.ElkAttribute(lazy=True, default='hi')
     default = elk.ElkAttribute(lazy=True, default=checker)

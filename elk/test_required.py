@@ -19,8 +19,7 @@ import unittest
 from . import elk
 
 
-class A(object):
-    __metaclass__ = elk.ElkMeta
+class A(elk.Elk):
     default = elk.ElkAttribute()
     nonereq = elk.ElkAttribute(required=None)
     nonreq = elk.ElkAttribute(required=False)

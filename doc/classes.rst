@@ -29,13 +29,8 @@ Making a class with Elk is simple::
         ...
 
 
-The ``elk.Elk`` base class does nothing but ensure that your class
-uses the Elk metaclass.  Subclassing ``elk.Elk`` is equivalent to::
-
-    class Person(object):
-        __metaclass__ = elk.ElkMeta
-        ...
-
+The ``elk.Elk`` base class simply ensures that your class uses the
+Elk metaclass and—on its own—has no other functionality.
 
 The Elk metaclass will notice when you are using Elk attributes,
 roles or method modifiers and do some work to initialise your class

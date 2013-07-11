@@ -46,15 +46,13 @@ class BuilderTestCase(unittest.TestCase):
 
     def test_builder_bogus_arg(self):
         with self.assertRaises(TypeError):
-            class B(object):
-                __metaclass__ = elk.ElkMeta
+            class B(elk.Elk):
                 x = elk.ElkAttribute(builder=3.14)
 
     def test_builder_no_method(self):
         """Unknown builder method is handled properly."""
         with self.assertRaises(AttributeError):
-            class C(object):
-                __metaclass__ = elk.ElkMeta
+            class C(elk.Elk):
                 x = elk.ElkAttribute(builder='nonexistant')
 
     def test_subclass_can_override_builder_method(self):
