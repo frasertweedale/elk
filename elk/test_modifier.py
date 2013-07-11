@@ -126,3 +126,69 @@ class MethodModifiersTestCase(unittest.TestCase):
         self.assertEqual(x.x, 0)
         x.orig3(True)
         self.assertEqual(x.x, 1)
+
+
+class OrigRole(elk.ElkRole):
+    s = elk.ElkAttribute(default='')
+
+    def orig(self, *args, **kwargs):
+        self.s += 'o'
+        return args, kwargs
+
+
+class ModifyingConsumer(elk.Elk):
+    __with__ = OrigRole
+
+    @elk.before('orig')
+    def before1(self, *args, **kwargs):
+        self.s += 'b'
+
+    @elk.after('orig')
+    def after1(self, *args, **kwargs):
+        self.s += 'a'
+
+    @elk.around('orig')
+    def around1(self, orig, *args, **kwargs):
+        self.s += 'r'
+        result = orig(*args, **kwargs)
+        self.s += "r'"
+        return result
+
+
+class ModifyingRole(elk.ElkRole):
+    @elk.before('orig')
+    def before1(self, *args, **kwargs):
+        self.s += 'b'
+
+    @elk.after('orig')
+    def after1(self, *args, **kwargs):
+        self.s += 'a'
+
+    @elk.around('orig')
+    def around1(self, orig, *args, **kwargs):
+        self.s += 'r'
+        result = orig(*args, **kwargs)
+        self.s += "r'"
+        return result
+
+
+class OrigConsumer(elk.Elk):
+    __with__ = ModifyingRole
+
+    s = elk.ElkAttribute(default='')
+
+    def orig(self, *args, **kwargs):
+        self.s += 'o'
+        return args, kwargs
+
+
+class RoleMethodModifiersTestCase(unittest.TestCase):
+    def test_modifiers_in_class_modify_methods_in_role(self):
+        c = ModifyingConsumer()
+        self.assertEqual(c.orig(1, k=2), ((1,), {'k': 2}))
+        self.assertEqual(c.s, "bror'a")
+
+    def test_modifiers_in_role_modify_methods_in_class(self):
+        c = OrigConsumer()
+        self.assertEqual(c.orig(1, k=2), ((1,), {'k': 2}))
+        self.assertEqual(c.s, "bror'a")
