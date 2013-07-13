@@ -51,6 +51,12 @@ class ElkMeta(type):
             attrdescs[k].init_class(k, dict)
         dict['__elk_attrs__'] = attrdescs
 
+        init_args = set(
+            v._init_arg or k for k, v in attrdescs.viewitems()
+            if not v._has_init_arg or v._init_arg is not None
+        )
+        dict['__elk_init_args__'] = init_args
+
         # apply method modifiers
         modifiers = sorted(
             v for v in dict.viewvalues()
@@ -72,11 +78,7 @@ class ElkMeta(type):
         attrdescs = cls.__elk_attrs__
 
         # extract attribute values from kwargs
-        init_args = set(
-            v._init_arg or k for k, v in attrdescs.viewitems()
-            if not v._has_init_arg or v._init_arg is not None
-        )
-        values = {k: kwargs.pop(k) for k in set(kwargs) & init_args}
+        values = {k: kwargs.pop(k) for k in set(kwargs) & cls.__elk_init_args__}
 
         # create new object with leftover args
         obj = type.__call__(cls, **kwargs)
