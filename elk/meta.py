@@ -61,9 +61,15 @@ class ElkMeta(type):
 
         return type.__new__(mcs, name, bases, dict)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(cls, *args, **kwargs):
+        try:
+            buildargs = cls.__buildargs__
+        except AttributeError:
+            buildargs = lambda **kwargs: kwargs
+        kwargs = buildargs(*args, **kwargs)
+
         # build a mapping of attribute descriptors
-        attrdescs = self.__elk_attrs__
+        attrdescs = cls.__elk_attrs__
 
         # extract attribute values from kwargs
         init_args = set(
@@ -73,7 +79,7 @@ class ElkMeta(type):
         values = {k: kwargs.pop(k) for k in set(kwargs) & init_args}
 
         # create new object with leftover args
-        obj = type.__call__(self, *args, **kwargs)
+        obj = type.__call__(cls, **kwargs)
 
         # initialise attributes
         obj.__elk_attrs__ = {}

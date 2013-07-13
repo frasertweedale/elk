@@ -9,7 +9,6 @@
   - initaliser?
 
 - methods
-  - __preinit__ c.f. BUILDARGS
   - method modifiers
     - wrap multiple methods
       - list
