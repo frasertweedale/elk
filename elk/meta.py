@@ -78,10 +78,10 @@ class ElkMeta(type):
         attrdescs = cls.__elk_attrs__
 
         # extract attribute values from kwargs
-        values = {k: kwargs.pop(k) for k in set(kwargs) & cls.__elk_init_args__}
+        values = {k: kwargs[k] for k in set(kwargs) & cls.__elk_init_args__}
 
-        # create new object with leftover args
-        obj = type.__call__(cls, **kwargs)
+        # create new object
+        obj = type.__call__(cls)
 
         # initialise attributes
         obj.__elk_attrs__ = {}
@@ -94,13 +94,15 @@ class ElkMeta(type):
             'init_instance_required',
         ):
             for k in attrdescs.viewkeys() - finished:
-                kwargs = {}
+                attr_kwargs = {}
                 init_arg = attrdescs[k]._init_arg or k
                 if init_arg in values:
-                    kwargs['value'] = values[init_arg]
-                if getattr(attrdescs[k], method)(obj, **kwargs):
+                    attr_kwargs['value'] = values[init_arg]
+                if getattr(attrdescs[k], method)(obj, **attr_kwargs):
                     finished.add(k)
 
+        # call __build__
+        obj.__build__(**kwargs)
         return obj
 
 
@@ -127,6 +129,11 @@ class ElkRoleMeta(type):
 
 class Elk(object):
     __metaclass__ = ElkMeta
+
+    def __build__(self, **kwargs):
+        unknown_attrs = kwargs.viewkeys() - self.__elk_init_args__
+        if unknown_attrs:
+            raise TypeError("unknown attributes: {}".format(unknown_attrs))
 
 
 class ElkRole(object):
