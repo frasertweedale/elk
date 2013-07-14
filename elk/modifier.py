@@ -47,6 +47,7 @@ class BeforeModifier(Modifier):
             get_orig = lambda i: functools.partial(o, i)
         else:
             get_orig = lambda i: getattr(super(type(i), i), self._name)
+
         def wrapped(instance, *args, **kwargs):
             self._f(instance, *args, **kwargs)
             return get_orig(instance)(*args, **kwargs)
@@ -60,6 +61,7 @@ class AfterModifier(Modifier):
             get_orig = lambda i: functools.partial(o, i)
         else:
             get_orig = lambda i: getattr(super(type(i), i), self._name)
+
         def wrapped(instance, *args, **kwargs):
             result = get_orig(instance)(*args, **kwargs)
             self._f(instance, *args, **kwargs)
@@ -74,6 +76,7 @@ class AroundModifier(Modifier):
             get_orig = lambda i: functools.partial(o, i)
         else:
             get_orig = lambda i: getattr(super(type(i), i), self._name)
+
         def wrapped(instance, *args, **kwargs):
             return self._f(instance, get_orig(instance), *args, **kwargs)
         dict[self._name] = wrapped

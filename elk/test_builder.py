@@ -58,7 +58,6 @@ class BuilderTestCase(unittest.TestCase):
     def test_subclass_can_override_builder_method(self):
         self.assertEqual(B().x, 'let me down')
 
-
     def test_role_consumer_can_supply_builder_for_role_attribute(self):
         class HasSize(elk.ElkRole):
             size = elk.ElkAttribute(builder='_build_size')
