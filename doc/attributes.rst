@@ -255,7 +255,9 @@ attribute value, as if ``obj.color.as_hex_string`` had been called.
 
 You can delegate to methods, Elk attributes or regular attributes.
 Attribute assignment and deletion works as normal through
-delegations.
+delegations (even through multiple levels of delegation).
+
+See :doc:`delegation` for documentation on how to set up delegation.
 
 
 Attribute inheritance

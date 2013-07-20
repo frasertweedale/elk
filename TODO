@@ -5,7 +5,9 @@
 - attribute
   - weakrefs
   - triggers
-  - native delegation?
+  - delegation
+    - native delegation?
+    - currying
   - initaliser?
 
 - methods
