@@ -34,6 +34,11 @@ class C(elk.Elk):
         return 'yay'
 
 
+class URI(elk.Elk):
+    host = elk.ElkAttribute()
+    path = elk.ElkAttribute()
+
+
 class DelegationTestCase(unittest.TestCase):
     def test_can_getattr_through_delegation(self):
         a = A()
@@ -83,3 +88,38 @@ class DelegationTestCase(unittest.TestCase):
         b.c = c
         self.assertEqual(b.method(), 'yay')
         self.assertEqual(a.method(), 'yay')
+
+    def test_can_use_sequence_to_define_delegation_name_and_target(self):
+        class Website(elk.Elk):
+            uri = elk.ElkAttribute(
+                default=URI(host='example.com', path='foo'),
+                handles=['host', 'path']
+            )
+
+        website = Website()
+        self.assertEqual(website.host, 'example.com')
+        self.assertEqual(website.path, 'foo')
+
+    def test_can_use_set_to_define_delegation_name_and_target(self):
+        class Website(elk.Elk):
+            uri = elk.ElkAttribute(
+                default=URI(host='example.com', path='foo'),
+                handles=set(['host', 'path'])
+            )
+
+        website = Website()
+        self.assertEqual(website.host, 'example.com')
+        self.assertEqual(website.path, 'foo')
+
+    def test_can_use_mapping_to_define_delegation_name_and_target(self):
+        class Website(elk.Elk):
+            uri = elk.ElkAttribute(
+                default=URI(host='example.com', path='foo'),
+                handles={'hostname': 'host', 'path': 'path'}
+            )
+
+        website = Website()
+        self.assertEqual(website.hostname, 'example.com')
+        self.assertEqual(website.path, 'foo')
+        with self.assertRaises(AttributeError):
+            website.host

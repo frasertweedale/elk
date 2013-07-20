@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import collections
 import functools
 import types
 
@@ -134,8 +135,12 @@ class AttributeDescriptor(object):
                 )
 
         # set up delegation
-        for name in self._handles:
-            dict[name] = DelegationDescriptor(name, self)
+        if isinstance(self._handles, collections.Mapping):
+            delegations = self._handles.viewitems()
+        else:
+            delegations = ((name, name) for name in self._handles)
+        for handle, target in delegations:
+            dict[handle] = DelegationDescriptor(target, self)
 
     def init_instance_value(self, instance, **kwargs):
         """Initialise the attribute with respect to the instance.
