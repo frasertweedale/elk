@@ -31,7 +31,7 @@ class C(elk.Elk):
     attr = elk.ElkAttribute(default=10)
 
     def method(self):
-        return 'yay'
+        return self
 
 
 class URI(elk.Elk):
@@ -80,14 +80,14 @@ class DelegationTestCase(unittest.TestCase):
         self.assertFalse(hasattr(b, 'attr'))
         self.assertFalse(hasattr(c, 'attr'))
 
-    def test_can_delegate_to_method(self):
+    def test_can_delegate_to_method_with_delegatee_as_invocant(self):
         a = A()
         b = B()
         c = C()
         a.b = b
         b.c = c
-        self.assertEqual(b.method(), 'yay')
-        self.assertEqual(a.method(), 'yay')
+        self.assertEqual(b.method(), c)
+        self.assertEqual(a.method(), c)
 
     def test_can_use_sequence_to_define_delegation_name_and_target(self):
         class Website(elk.Elk):
