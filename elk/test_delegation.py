@@ -123,3 +123,14 @@ class DelegationTestCase(unittest.TestCase):
         self.assertEqual(website.path, 'foo')
         with self.assertRaises(AttributeError):
             website.host
+
+    def test_delegating_to_undefined_attribute_raises_AttributeError(self):
+        class Outer(elk.Elk):
+            inner = elk.ElkAttribute(type=list, handles=['append'])
+
+        outer = Outer()
+        with self.assertRaises(AttributeError):
+            outer.append(1)
+        outer.inner = []
+        outer.append(1)
+        self.assertEqual(outer.inner, [1])
