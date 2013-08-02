@@ -45,9 +45,9 @@ A simple role
 Creating a role looks a lot like creating a Moose class::
 
     class Breakable(elk.ElkRole):
-        is_broken = elk.ElkAttribute(type=bool)
+        is_broken = elk.ElkAttribute(type=bool, default=False)
 
-        def break(self):
+        def break_(self):
             print "I broke"
             self.is_broken = True
 
@@ -75,7 +75,7 @@ will also return ``True``::
     car = Car(engine=Engine())
 
     print 'Busted' if car.is_broken else 'Still working'
-    car.break()
+    car.break_()
     print 'Busted' if car.is_broken else 'Still working'
 
     isinstance(car, Breakable)  # True
