@@ -105,6 +105,12 @@ class ElkMeta(type):
 
 
 class ElkRoleMeta(type):
+    def __new__(mcs, name, bases, role_dict):
+        # IronPython 2.7.0.40 does not expose descriptors in
+        # dictproxy iteration, so copy the dict.
+        role_dict['__elk_role_attrs__'] = dict(role_dict)
+        return type.__new__(mcs, name, bases, role_dict)
+
     def __call__(self, *args, **kwargs):
         raise TypeError('Roles cannot be instantiated directly.')
 
@@ -120,8 +126,8 @@ class ElkRoleMeta(type):
     @classmethod
     def apply_to_class_dict(mcs, dict, role):
         """Apply a role to a class."""
-        for k, v in role.__dict__.items():
-            if k not in dict and not k.startswith('__'):
+        for k, v in role.__elk_role_attrs__.viewitems():
+            if k not in dict:
                 dict[k] = v
 
 
