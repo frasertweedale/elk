@@ -142,18 +142,12 @@ class AttributeDescriptor(object):
         for handle, target in delegations:
             dict[handle] = DelegationDescriptor(target, self)
 
-    def init_instance_value(self, instance, **kwargs):
-        """Initialise the attribute with respect to the instance.
-
-        ``value``
-          If supplied, the initial value will be set to this value,
-          in preference to any default that may have been specified.
-        """
-        if 'value' in kwargs:
-            self.__set__(instance, kwargs['value'], force=True)
+    def init_instance_value(self, instance, value):
+        if value:
+            self.__set__(instance, value[0], force=True)
             return True
 
-    def init_instance_default(self, instance, **kwargs):
+    def init_instance_default(self, instance, value):
         if self._has_default:
             default = self._default
             if self._lazy:
@@ -170,7 +164,7 @@ class AttributeDescriptor(object):
                 )
             return True
 
-    def init_instance_builder(self, instance, **kwargs):
+    def init_instance_builder(self, instance, value):
         if self._has_builder:
             builder = getattr(instance, self._builder_name)
             if self._lazy:
@@ -179,7 +173,7 @@ class AttributeDescriptor(object):
                 self.__set__(instance, builder(), force=True)
             return True
 
-    def init_instance_required(self, instance, **kwargs):
+    def init_instance_required(self, instance, value):
         if self._required:
             # value required, but not provided, and no default or builder
             raise AttributeError('required attribute not provided')

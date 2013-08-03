@@ -94,11 +94,9 @@ class ElkMeta(type):
             'init_instance_required',
         ):
             for k in attrdescs.viewkeys() - finished:
-                attr_kwargs = {}
                 init_arg = attrdescs[k]._init_arg or k
-                if init_arg in values:
-                    attr_kwargs['value'] = values[init_arg]
-                if getattr(attrdescs[k], method)(obj, **attr_kwargs):
+                value = (values[init_arg],) if init_arg in values else ()
+                if getattr(attrdescs[k], method)(obj, value):
                     finished.add(k)
 
         # call __build__
