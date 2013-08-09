@@ -71,7 +71,7 @@ class AttributeDescriptor(object):
         self._lazy = lazy
 
         # check and store default
-        self._has_default = True if 'default' in kwargs else False
+        self._has_default = 'default' in kwargs
         self._default = kwargs.get('default')
         if self._has_default:
             try:
@@ -84,14 +84,13 @@ class AttributeDescriptor(object):
         # check and store builder
         if builder is not None and not isinstance(builder, str):
             raise TypeError('builder must be a str')
-        self._has_builder = True if builder else False
-        self._builder_name = builder
+        self._builder = builder
 
         # store type
         self._type = type
 
         # check and store init_arg
-        self._has_init_arg = True if 'init_arg' in kwargs else False
+        self._has_init_arg = 'init_arg' in kwargs
         self._init_arg = kwargs.get('init_arg')
         if not isinstance(self._init_arg, (str, types.NoneType)):
             raise TypeError('init_arg must be str or None')
@@ -122,16 +121,16 @@ class AttributeDescriptor(object):
         self._name = name
 
         # check builder
-        if self._has_builder:
-            if self._builder_name not in dict:
+        if self._builder:
+            if self._builder not in dict:
                 raise AttributeError(
                     '{!r} attribute builder method {!r} not found'
-                    .format(self._name, self._builder_name)
+                    .format(self._name, self._builder)
                 )
-            if not callable(dict[self._builder_name]):
+            if not callable(dict[self._builder]):
                 raise AttributeError(
                     '{!r} attribute builder {!r} is not callable'
-                    .format(self._name, self._builder_name)
+                    .format(self._name, self._builder)
                 )
 
         # set up delegation
@@ -165,8 +164,8 @@ class AttributeDescriptor(object):
             return True
 
     def init_instance_builder(self, instance, value):
-        if self._has_builder:
-            builder = getattr(instance, self._builder_name)
+        if self._builder:
+            builder = getattr(instance, self._builder)
             if self._lazy:
                 instance.__elk_lazy__[id(self)] = builder
             else:
