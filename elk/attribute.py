@@ -72,7 +72,7 @@ class AttributeDescriptor(object):
 
         # check and store default
         self._has_default = 'default' in kwargs
-        self._default = kwargs.get('default')
+        self._default = kwargs.pop('default', None)
         if self._has_default:
             try:
                 hash(self._default)
@@ -91,7 +91,7 @@ class AttributeDescriptor(object):
 
         # check and store init_arg
         self._has_init_arg = 'init_arg' in kwargs
-        self._init_arg = kwargs.get('init_arg')
+        self._init_arg = kwargs.pop('init_arg', None)
         if not isinstance(self._init_arg, (str, types.NoneType)):
             raise TypeError('init_arg must be str or None')
 
@@ -103,6 +103,10 @@ class AttributeDescriptor(object):
         if self._type is not None and self._has_default \
                 and not isinstance(self._default, self._type):
             raise TypeError('Attribute default has bad type.')
+
+        # check for unrecognised keyword arguments
+        if kwargs:
+            raise TypeError('unrecognised option: {}'.format(kwargs.pop()))
 
     def init_class(self, name, dict):
         """Initialise the attribute descriptor with respect to the class.
