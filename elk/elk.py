@@ -20,4 +20,4 @@ from .attribute import AttributeDescriptor as ElkAttribute
 from .meta import ElkRole, Elk
 from .modifier import before, after, around
 
-__version__ = '0.1'
+__version__ = '0.2'
