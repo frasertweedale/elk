@@ -183,6 +183,8 @@ class AttributeDescriptor(object):
 
     @_key_error_to_attribute_error
     def __get__(self, instance, owner):
+        if instance is None:
+            return self
         _id = id(self)
         if _id not in instance.__elk_attrs__ and _id in instance.__elk_lazy__:
             self.__set__(instance, instance.__elk_lazy__[_id](), force=True)
