@@ -57,15 +57,17 @@ class ElkMeta(type):
         )
         dict['__elk_init_args__'] = init_args
 
+        cls = type.__new__(mcs, name, bases, dict)
+
         # apply method modifiers
         modifiers = sorted(
             v for v in dict.viewvalues()
             if isinstance(v, modifier.Modifier)
         )
         for mod in modifiers:
-            mod.apply(dict, bases)
+            mod.apply(cls)
 
-        return type.__new__(mcs, name, bases, dict)
+        return cls
 
     def __call__(cls, *args, **kwargs):
         try:

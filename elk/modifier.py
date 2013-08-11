@@ -41,45 +41,41 @@ class Modifier(object):
 
 
 class BeforeModifier(Modifier):
-    def apply(self, dict, bases):
-        if self._name in dict:
-            o = dict[self._name]
-            get_orig = lambda i: functools.partial(o, i)
-        else:
-            get_orig = lambda i: getattr(super(type(i), i), self._name)
+    def apply(self, cls):
+        target = getattr(cls, self._name)
 
         def wrapped(instance, *args, **kwargs):
             self._f(instance, *args, **kwargs)
-            return get_orig(instance)(*args, **kwargs)
-        dict[self._name] = wrapped
+            return target(instance, *args, **kwargs)
+
+        setattr(cls, self._name, wrapped)
 
 
 class AfterModifier(Modifier):
-    def apply(self, dict, bases):
-        if self._name in dict:
-            o = dict[self._name]
-            get_orig = lambda i: functools.partial(o, i)
-        else:
-            get_orig = lambda i: getattr(super(type(i), i), self._name)
+    def apply(self, cls):
+        target = getattr(cls, self._name)
 
         def wrapped(instance, *args, **kwargs):
-            result = get_orig(instance)(*args, **kwargs)
+            result = target(instance, *args, **kwargs)
             self._f(instance, *args, **kwargs)
             return result
-        dict[self._name] = wrapped
+
+        setattr(cls, self._name, wrapped)
 
 
 class AroundModifier(Modifier):
-    def apply(self, dict, bases):
-        if self._name in dict:
-            o = dict[self._name]
-            get_orig = lambda i: functools.partial(o, i)
-        else:
-            get_orig = lambda i: getattr(super(type(i), i), self._name)
+    def apply(self, cls):
+        target = getattr(cls, self._name)
 
         def wrapped(instance, *args, **kwargs):
-            return self._f(instance, get_orig(instance), *args, **kwargs)
-        dict[self._name] = wrapped
+            return self._f(
+                instance,
+                functools.partial(target, instance),
+                *args,
+                **kwargs
+            )
+
+        setattr(cls, self._name, wrapped)
 
 
 def before(name):
