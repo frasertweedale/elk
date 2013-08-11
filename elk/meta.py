@@ -59,6 +59,10 @@ class ElkMeta(type):
 
         cls = type.__new__(mcs, name, bases, dict)
 
+        # check role requirements
+        for role in roles:
+            ElkRoleMeta.check_requirements(cls, role)
+
         # apply method modifiers
         modifiers = sorted(
             v for v in dict.viewvalues()
@@ -131,6 +135,15 @@ class ElkRoleMeta(type):
         for k, v in role.__elk_role_attrs__.viewitems():
             if k not in dict:
                 dict[k] = v
+
+    @classmethod
+    def check_requirements(mcs, cls, role):
+        requires = getattr(role, '__require__', ())
+        if isinstance(requires, str):
+            requires = (requires,)
+        for require in requires:
+            if not hasattr(cls, require):
+                raise TypeError('{} requires {}'.format(role, require))
 
 
 class Elk(object):

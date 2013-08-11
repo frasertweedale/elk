@@ -136,3 +136,38 @@ class MooseRolesTestCase(unittest.TestCase):
         car.break_()
         self.assertTrue(car.is_broken)
         self.assertTrue(isinstance(car, Breakable))
+
+
+class SingleRequireRole(elk.ElkRole):
+    __require__ = 'x'
+
+
+class MultiRequireRole(elk.ElkRole):
+    __require__ = 'y', 'z'
+
+
+class RequiresTestCase(unittest.TestCase):
+    def test_missing_requirement_raises_TypeError(self):
+        with self.assertRaises(TypeError):
+            class A(elk.Elk):
+                __with__ = SingleRequireRole
+
+        with self.assertRaises(TypeError):
+            class B(elk.Elk):
+                y = elk.ElkAttribute()
+                __with__ = MultiRequireRole
+
+        with self.assertRaises(TypeError):
+            class C(elk.Elk):
+                z = elk.ElkAttribute()
+                __with__ = MultiRequireRole
+
+    def test_satisfied_requirement_allows_composition(self):
+        class A(elk.Elk):
+            __with__ = SingleRequireRole, MultiRequireRole
+            x = elk.ElkAttribute()
+            y = elk.ElkAttribute()
+            z = elk.ElkAttribute()
+
+        self.assertTrue(issubclass(A, SingleRequireRole))
+        self.assertTrue(issubclass(A, MultiRequireRole))

@@ -18,7 +18,5 @@
     - inner and augment
 
 - roles
-  - required attributes
-  - required methods
   - method exclusion and aliasing
   - apply role to instance?
