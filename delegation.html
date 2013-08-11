@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Delegation &mdash; Elk 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Elk 0.2 documentation" href="index.html" />
+    <link rel="next" title="Construction" href="construction.html" />
+    <link rel="prev" title="Attributes" href="attributes.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="construction.html" title="Construction"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="attributes.html" title="Attributes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Elk 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="delegation">
+<h1>Delegation<a class="headerlink" href="#delegation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="what-is-delegation">
+<h2>What is delegation?<a class="headerlink" href="#what-is-delegation" title="Permalink to this headline">¶</a></h2>
+<p>Delegation is a feature that lets you create &#8220;proxy&#8221; attributes that
+do nothing more than access some other attribute or method on an
+attribute.  This lets you simplify a complex set of &#8220;has-a&#8221;
+relationships and present a single unified API from one class.</p>
+<p>With delegation, consumers of a class don&#8217;t need to know about all
+the objects it contains, reducing the amount of API they need to
+learn.</p>
+<p>Delegations are defined as a mapping between one or more attributes
+provided by the &#8220;real&#8221; class (the <em>delegatee</em>), and a set of
+corresponding attributes in the delegating class. The delegating
+class can re-use the attribute names provided by the delegatee or
+provide its own names.</p>
+<p>Delegation is also a great way to wrap an existing class, especially
+a non-Elk class or one that is somehow hard (or impossible) to
+subclass.</p>
+</div>
+<div class="section" id="defining-delegations">
+<h2>Defining delegations<a class="headerlink" href="#defining-delegations" title="Permalink to this headline">¶</a></h2>
+<p>Elk offers a couple of ways to define delegations.</p>
+<p>The simplest form is to simply specify a sequence of attribute
+names:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Website</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">URI</span><span class="p">,</span>
+        <span class="n">handles</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;host&#39;</span><span class="p">,</span> <span class="s">&#39;path&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>With this definition, we can read <tt class="docutils literal"><span class="pre">website.host</span></tt> and it &#8220;just
+works&#8221;.  Under the hood, Elk will read <tt class="docutils literal"><span class="pre">website.uri.host</span></tt> for you.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Methods accessed through delegations are bound to the <em>delegatee</em>.</p>
+</div>
+<p>Delegations can also be declared with a mapping type, allowing
+attribute renaming:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Website</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">(</span>
+        <span class="nb">type</span> <span class="o">=</span> <span class="n">URI</span><span class="p">,</span>
+        <span class="n">handles</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;hostname&#39;</span><span class="p">:</span> <span class="s">&#39;host&#39;</span><span class="p">,</span> <span class="s">&#39;path&#39;</span><span class="p">:</span> <span class="s">&#39;path&#39;</span><span class="p">}</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>This examples creates a a <tt class="docutils literal"><span class="pre">website.hostname</span></tt> attribute rather than
+using the name of the URI attribute, <tt class="docutils literal"><span class="pre">host</span></tt>.</p>
+</div>
+<div class="section" id="missing-attributes">
+<h2>Missing attributes<a class="headerlink" href="#missing-attributes" title="Permalink to this headline">¶</a></h2>
+<p>It is perfectly valid to delegate to attributes that are not
+required and therefore may be undefined.  Elk will raise
+<tt class="docutils literal"><span class="pre">AttributeError</span></tt> when this situation occurs at runtime.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Delegation</a><ul>
+<li><a class="reference internal" href="#what-is-delegation">What is delegation?</a></li>
+<li><a class="reference internal" href="#defining-delegations">Defining delegations</a></li>
+<li><a class="reference internal" href="#missing-attributes">Missing attributes</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="attributes.html"
+                        title="previous chapter">Attributes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="construction.html"
+                        title="next chapter">Construction</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/delegation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="construction.html" title="Construction"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="attributes.html" title="Attributes"
+             >previous</a> |</li>
+        <li><a href="index.html">Elk 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013 Infinity Interactive; Copyright 2013 Fraser Tweedale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

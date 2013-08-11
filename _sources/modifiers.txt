@@ -40,9 +40,9 @@ examples::
             print "just called foo"
 
         @elk.around('foo')
-        def _around_foo(self):
+        def _around_foo(self, orig):
             print "  I'm around foo"
-            yield
+            orig()
             print "  I'm still around foo"
 
 

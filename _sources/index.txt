@@ -35,6 +35,8 @@ Contents:
 
   classes
   attributes
+  delegation
+  construction
   modifiers
   roles
 

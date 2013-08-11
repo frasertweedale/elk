@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Construction &mdash; Elk 0.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Elk 0.2 documentation" href="index.html" />
+    <link rel="next" title="Method Modifiers" href="modifiers.html" />
+    <link rel="prev" title="Delegation" href="delegation.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="modifiers.html" title="Method Modifiers"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="delegation.html" title="Delegation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Elk 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="construction">
+<h1>Construction<a class="headerlink" href="#construction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="where-s-the-constructor">
+<h2>Where&#8217;s the constructor?<a class="headerlink" href="#where-s-the-constructor" title="Permalink to this headline">¶</a></h2>
+<p><strong>Do not define an __init__ method for your classes!</strong></p>
+<p>Subclasses of <tt class="docutils literal"><span class="pre">elk.Elk</span></tt> are automatically initialised by the Elk
+metaclass.  Use the <a class="reference internal" href="#build">__build__</a> hook for post-construction
+validation or behaviour.</p>
+</div>
+<div class="section" id="object-construction-and-attributes">
+<h2>Object construction and attributes<a class="headerlink" href="#object-construction-and-attributes" title="Permalink to this headline">¶</a></h2>
+<p>Elk classes accept keyword arguments matching your attributes
+(actually, matching their <tt class="docutils literal"><span class="pre">init_arg</span></tt>).  You don&#8217;t need to worry
+about setting attributes yourself—simply define a class and you&#8217;re
+ready to start creating objects.</p>
+</div>
+<div class="section" id="object-construction-hooks">
+<h2>Object construction hooks<a class="headerlink" href="#object-construction-hooks" title="Permalink to this headline">¶</a></h2>
+<p>Elk lets you hook into object construction.  You can validate an
+object&#8217;s state, do logging or customise construction from parameters
+which do not match your attributes by defining the <tt class="docutils literal"><span class="pre">__buildargs__</span></tt>
+and/or <tt class="docutils literal"><span class="pre">__build__</span></tt> methods.</p>
+<p>If your Elk class defines these methods, the Elk metaclass will
+arrange for them to be called as part of the object construction
+process.</p>
+<div class="section" id="buildargs">
+<h3><tt class="docutils literal"><span class="pre">__buildargs__</span></tt><a class="headerlink" href="#buildargs" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">__buildargs__</span></tt> method is called as a class method <em>before</em> an
+object is created.  It will receive all of the positional and
+keyword arguments that were passed to the constructor <em>as-is</em>, and
+must return a <tt class="docutils literal"><span class="pre">dict</span></tt>.  The <tt class="docutils literal"><span class="pre">dict</span></tt> will be used to construct the
+object, so it should contain keys matching your attributes&#8217; names
+(or <tt class="docutils literal"><span class="pre">init_arg</span></tt>).</p>
+<p>One common use for <tt class="docutils literal"><span class="pre">__buildargs__</span></tt> is to accomodate a non-keyword
+args calling style.  For example, we might want to allow our
+<tt class="docutils literal"><span class="pre">Person</span></tt> class to be called with a single positional argument, the
+Tax File Number:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">Person</span><span class="p">(</span><span class="n">tfn</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A <tt class="docutils literal"><span class="pre">__buildargs__</span></tt> method can be used to accomodate this calling
+style:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">tfn</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">()</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">__buildargs__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;tfn&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">kwargs</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Without a <tt class="docutils literal"><span class="pre">__buildargs__</span></tt> method, Elk will raise <tt class="docutils literal"><span class="pre">TypeError</span></tt>
+if positional arguments are passed.</p>
+</div>
+</div>
+<div class="section" id="build">
+<h3><tt class="docutils literal"><span class="pre">__build__</span></tt><a class="headerlink" href="#build" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="docutils literal"><span class="pre">__build__</span></tt> method is called <em>after</em> an object is created.
+There are several reasons to use a <tt class="docutils literal"><span class="pre">__build__</span></tt> method.  One of the
+most common is to check that the object state is valid.  While we
+can validate individual attributes through type constraints, we
+can&#8217;t validate the state of a whole object that way.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__build__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">country_of_residence</span> <span class="o">==</span> <span class="s">&#39;AUS&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;tfn&#39;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;AUS residents must have a Tax File Number&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Another use of a <tt class="docutils literal"><span class="pre">__build__</span></tt> method could be for logging or
+tracking object creation:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__build__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&#39;Made a new Person; tfn={}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tfn</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">__build__</span></tt> method is called with the parameters passed to the
+constructor (after munging by <tt class="docutils literal"><span class="pre">__buildargs__</span></tt>).  This gives you a
+chance to do something with parameters that do not represent object
+attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">__build__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">add_friend</span><span class="p">(</span><span class="n">User</span><span class="p">(</span><span class="n">user_id</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;user_id&#39;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The default <tt class="docutils literal"><span class="pre">__build__</span></tt> method raises <tt class="docutils literal"><span class="pre">TypeError</span></tt> if any
+arguments are received that do not correspond to Elk
+attributes:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">elk</span><span class="o">.</span><span class="n">Elk</span><span class="p">):</span>
+    <span class="n">tfn</span> <span class="o">=</span> <span class="n">elk</span><span class="o">.</span><span class="n">ElkAttribute</span><span class="p">()</span>
+
+<span class="n">person</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">tfn</span><span class="o">=</span><span class="s">&#39;123456789&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;Bob&#39;</span><span class="p">)</span>  <span class="c"># raises TypeError</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Construction</a><ul>
+<li><a class="reference internal" href="#where-s-the-constructor">Where&#8217;s the constructor?</a></li>
+<li><a class="reference internal" href="#object-construction-and-attributes">Object construction and attributes</a></li>
+<li><a class="reference internal" href="#object-construction-hooks">Object construction hooks</a><ul>
+<li><a class="reference internal" href="#buildargs"><tt class="docutils literal"><span class="pre">__buildargs__</span></tt></a></li>
+<li><a class="reference internal" href="#build"><tt class="docutils literal"><span class="pre">__build__</span></tt></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="delegation.html"
+                        title="previous chapter">Delegation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="modifiers.html"
+                        title="next chapter">Method Modifiers</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/construction.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="modifiers.html" title="Method Modifiers"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="delegation.html" title="Delegation"
+             >previous</a> |</li>
+        <li><a href="index.html">Elk 0.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2013 Infinity Interactive; Copyright 2013 Fraser Tweedale.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

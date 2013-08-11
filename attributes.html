@@ -8,7 +8,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Attributes &mdash; elk 0.1 documentation</title>
+    <title>Attributes &mdash; Elk 0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -16,7 +16,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.1',
+        VERSION:     '0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,8 +25,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="elk 0.1 documentation" href="index.html" />
-    <link rel="next" title="Method Modifiers" href="modifiers.html" />
+    <link rel="top" title="Elk 0.2 documentation" href="index.html" />
+    <link rel="next" title="Delegation" href="delegation.html" />
     <link rel="prev" title="Classes" href="classes.html" /> 
   </head>
   <body>
@@ -37,12 +37,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="modifiers.html" title="Method Modifiers"
+          <a href="delegation.html" title="Delegation"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="classes.html" title="Classes"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Elk 0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -249,7 +249,8 @@ the attribute, which when called will call <tt class="docutils literal"><span cl
 attribute value, as if <tt class="docutils literal"><span class="pre">obj.color.as_hex_string</span></tt> had been called.</p>
 <p>You can delegate to methods, Elk attributes or regular attributes.
 Attribute assignment and deletion works as normal through
-delegations.</p>
+delegations (even through multiple levels of delegation).</p>
+<p>See <a class="reference internal" href="delegation.html"><em>Delegation</em></a> for documentation on how to set up delegation.</p>
 </div>
 </div>
 <div class="section" id="attribute-inheritance">
@@ -291,8 +292,8 @@ However, you can override the inherited attribute.</p>
   <p class="topless"><a href="classes.html"
                         title="previous chapter">Classes</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="modifiers.html"
-                        title="next chapter">Method Modifiers</a></p>
+  <p class="topless"><a href="delegation.html"
+                        title="next chapter">Delegation</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/attributes.txt"
@@ -322,16 +323,16 @@ However, you can override the inherited attribute.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="modifiers.html" title="Method Modifiers"
+          <a href="delegation.html" title="Delegation"
              >next</a> |</li>
         <li class="right" >
           <a href="classes.html" title="Classes"
              >previous</a> |</li>
-        <li><a href="index.html">elk 0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Elk 0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2013, Fraser Tweedale.
+        &copy; Copyright 2013 Infinity Interactive; Copyright 2013 Fraser Tweedale.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
