@@ -1,5 +1,5 @@
 # This file is part of elk
-# Copyright (C) 2012, 2013 Fraser Tweedale
+# Copyright (C) 2012-2014  Fraser Tweedale
 #
 # elk is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,5 +19,7 @@
 from .attribute import AttributeDescriptor as ElkAttribute
 from .meta import ElkRole, Elk
 from .modifier import before, after, around
+
+attr = ElkAttribute
 
 __version__ = '0.2'
