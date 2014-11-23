@@ -1,7 +1,7 @@
 ..
   This file is part of the Elk Manual
   Copyright (C) 2013 Infinity Interactive, Inc.
-  Copyright (C) 2013 Fraser Tweedale
+  Copyright (C) 2013, 2014 Fraser Tweedale
 
   elk is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -265,3 +265,13 @@ Attribute inheritance
 
 A subclass inherits all of its base class(es)' attributes as-is.
 However, you can override the inherited attribute.
+
+
+Shorthand
+=========
+
+Typing ``elk.ElkAttribute`` all the time can get a bit tedious.  The
+``attr`` alias is provided as a convenience::
+
+    class Person(elk.Elk):
+        name = elk.attr(required=True)
