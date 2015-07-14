@@ -16,7 +16,9 @@
 
 import collections
 import functools
-import types
+
+
+viewitems = getattr(dict, 'viewitems', getattr(dict, 'items'))
 
 
 class DelegationDescriptor(object):
@@ -92,7 +94,7 @@ class AttributeDescriptor(object):
         # check and store init_arg
         self._has_init_arg = 'init_arg' in kwargs
         self._init_arg = kwargs.pop('init_arg', None)
-        if not isinstance(self._init_arg, (str, types.NoneType)):
+        if self._init_arg is not None and not isinstance(self._init_arg, str):
             raise TypeError('init_arg must be str or None')
 
         # store delegation list
@@ -139,7 +141,7 @@ class AttributeDescriptor(object):
 
         # set up delegation
         if isinstance(self._handles, collections.Mapping):
-            delegations = self._handles.viewitems()
+            delegations = viewitems(self._handles)
         else:
             delegations = ((name, name) for name in self._handles)
         for handle, target in delegations:

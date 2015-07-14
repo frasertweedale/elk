@@ -20,6 +20,11 @@ from . import attribute
 from . import modifier
 
 
+viewitems = getattr(dict, 'viewitems', getattr(dict, 'items'))
+viewkeys = getattr(dict, 'viewkeys', getattr(dict, 'keys'))
+viewvalues = getattr(dict, 'viewvalues', getattr(dict, 'values'))
+
+
 class ElkMeta(type):
     def __new__(mcs, name, bases, dict):
         # initialise roles
@@ -52,7 +57,7 @@ class ElkMeta(type):
         dict['__elk_attrs__'] = attrdescs
 
         init_args = set(
-            v._init_arg or k for k, v in attrdescs.viewitems()
+            v._init_arg or k for k, v in viewitems(attrdescs)
             if not v._has_init_arg or v._init_arg is not None
         )
         dict['__elk_init_args__'] = init_args
@@ -65,7 +70,7 @@ class ElkMeta(type):
 
         # apply method modifiers
         modifiers = sorted(
-            v for v in dict.viewvalues()
+            v for v in viewvalues(dict)
             if isinstance(v, modifier.Modifier)
         )
         for mod in modifiers:
@@ -99,7 +104,7 @@ class ElkMeta(type):
             'init_instance_builder',
             'init_instance_required',
         ):
-            for k in attrdescs.viewkeys() - finished:
+            for k in viewkeys(attrdescs) - finished:
                 init_arg = attrdescs[k]._init_arg or k
                 value = (values[init_arg],) if init_arg in values else ()
                 if getattr(attrdescs[k], method)(obj, value):
@@ -132,7 +137,7 @@ class ElkRoleMeta(type):
     @classmethod
     def apply_to_class_dict(mcs, dict, role):
         """Apply a role to a class."""
-        for k, v in role.__elk_role_attrs__.viewitems():
+        for k, v in viewitems(role.__elk_role_attrs__):
             if k not in dict:
                 dict[k] = v
 
@@ -146,14 +151,13 @@ class ElkRoleMeta(type):
                 raise TypeError('{} requires {}'.format(role, require))
 
 
-class Elk(object):
-    __metaclass__ = ElkMeta
+def _elk_build(self, **kwargs):
+    unknown_attrs = viewkeys(kwargs) - self.__elk_init_args__
+    if unknown_attrs:
+        raise TypeError("unknown attributes: {}".format(unknown_attrs))
 
-    def __build__(self, **kwargs):
-        unknown_attrs = kwargs.viewkeys() - self.__elk_init_args__
-        if unknown_attrs:
-            raise TypeError("unknown attributes: {}".format(unknown_attrs))
+Elk = ElkMeta(str('Elk'), (object,), {
+    '__build__': _elk_build
+})
 
-
-class ElkRole(object):
-    __metaclass__ = ElkRoleMeta
+ElkRole = ElkRoleMeta(str('ElkRole'), (object,), {})
